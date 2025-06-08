@@ -27,7 +27,7 @@ export default function Home() {
       className="min-h-screen
      bg-black text-white"
     >
-      <ParallaxWrapper isLoggedIn={true}>
+      <ParallaxWrapper isLoggedIn={isLoggedIn}>
         <LampDemo />
         <SecondLandingPage />
       </ParallaxWrapper>
