@@ -2,9 +2,10 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import { NavbarDemo } from "../ResizeableNavbar";
 
 interface ParallaxWrapperProps {
-  children: React.ReactNode[]; // [section1, section2]
+  children: [React.ReactNode, React.ReactElement<{ scrollRef?: React.RefObject<HTMLDivElement | null> }>];
   isLoggedIn: boolean;
 }
 
@@ -16,7 +17,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   const scrollAccumulator = useRef(0);
   const [isFullyOpen, setIsFullyOpen] = useState(false);
 
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Motion transforms for the two triangles
   const leftX = useTransform(progress, [0, 1], ["0vw", "-50vw"]);
@@ -75,9 +76,11 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       <div
         id="scroll-section"
         ref={scrollRef}
-        className="absolute inset-0 z-0 overflow-y-auto h-screen"
+        className="absolute inset-0 z-0 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {children[1]}
+        {React.cloneElement(children[1], {
+          scrollRef: scrollRef, // pass the whole ref object
+        })}
       </div>
 
       {/* Top-left triangle */}
@@ -87,21 +90,21 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
           x: leftX,
           y: leftY,
+          display: isFullyOpen ? "none" : "block",
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
-        <div className="overflow-hidden w-full h-full flex items-center justify-center">
-          {children[0]}
-        </div>
+        <div className="flex items-center justify-center">{children[0]}</div>
       </motion.div>
 
       {/* Bottom-right triangle */}
       <motion.div
-        className="fixed bottom-0 right-0 w-screen h-screen z-10"
+        className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
           x: rightX,
           y: rightY,
+          display: isFullyOpen ? "none" : "block",
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
