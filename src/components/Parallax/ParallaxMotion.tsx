@@ -4,7 +4,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
 interface ParallaxWrapperProps {
-  children: [React.ReactNode, React.ReactElement<{ scrollRef?: React.RefObject<HTMLDivElement | null> }>];
+  children: [
+    React.ReactNode,
+    React.ReactElement<{ scrollRef?: React.RefObject<HTMLDivElement | null> }>
+  ];
   isLoggedIn: boolean;
 }
 
@@ -26,6 +29,10 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
   useEffect(() => {
     if (!isLoggedIn) return;
+
+    // Detect if on mobile (pointer: coarse usually means touch device)
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+    if (isMobile) return; // Skip wheel logic on mobile
 
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
@@ -63,7 +70,18 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   }, [progress, isLoggedIn]);
 
   useEffect(() => {
-    document.body.style.overflow = isFullyOpen ? "auto" : "hidden";
+    if (typeof window === "undefined") return;
+
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+
+    if (isMobile) {
+      // On mobile, always allow scrolling
+      document.body.style.overflow = "auto";
+    } else {
+      // On desktop, toggle based on isFullyOpen
+      document.body.style.overflow = isFullyOpen ? "auto" : "hidden";
+    }
+
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -76,6 +94,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         id="scroll-section"
         ref={scrollRef}
         className="absolute inset-0 z-0 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ height: "100vh" }} // ensure full viewport height for scroll
       >
         {React.cloneElement(children[1], {
           scrollRef: scrollRef, // pass the whole ref object
