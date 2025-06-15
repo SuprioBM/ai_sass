@@ -117,7 +117,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       {/* Bottom-right triangle */}
       <motion.div
-        className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
+        className="fixed bottom-0 right-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
           x: rightX,
