@@ -5,41 +5,57 @@ import { sendVerificationEmail } from "@/lib/auth/mail";
 import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
-  const { name, email, password } = await req.json();
+  try {
+    const { name, email, password } = await req.json();
 
-  if (!name || !email || !password)
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    if (!name || !email || !password)
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser)
-    return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser)
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
+      );
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-    },
-  });
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
 
-  const token = jwt.sign(
-    { email: user.email },
-    process.env.EMAIL_VERIFICATION_SECRET!,
-    { expiresIn: "1h" }
-  );
-  const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+    const token = jwt.sign(
+      { email: user.email },
+      process.env.EMAIL_VERIFICATION_SECRET!,
+      { expiresIn: "1h" }
+    );
 
-  await prisma.verificationToken.create({
-    data: {
-      token,
-      userId: user.id,
-      expires,
-    },
-  });
+    const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
-  await sendVerificationEmail(email, token);
+    await prisma.verificationToken.create({
+      data: {
+        token,
+        userId: user.id,
+        expires,
+      },
+    });
 
-  return NextResponse.json({ message: "Verification email sent" });
+    await sendVerificationEmail(email, token);
+
+    return NextResponse.json({ message: "Verification email sent" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Signup error:", error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    console.error("Unknown error during signup:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
