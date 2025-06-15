@@ -144,7 +144,6 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       className="relative w-screen h-screen overflow-hidden bg-white"
       style={{ transform: "translateZ(0)" }}
     >
-      <div style={{ height: "1px", pointerEvents: "none" }} />
       {/* Scrollable section (revealed after parallax opens) */}
       <div
         id="scroll-section"
