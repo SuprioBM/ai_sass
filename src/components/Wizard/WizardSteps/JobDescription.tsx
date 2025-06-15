@@ -19,9 +19,6 @@ export default function JobDescriptionStep({
   onNext,
   onBack,
 }: JobDescriptionStepProps) {
-  const {trigger} = useFormContext<FormData>();
-
- 
 
   return (
     <div className="space-y-4">

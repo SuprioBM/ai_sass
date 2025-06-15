@@ -70,13 +70,19 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
           <Text style={styles.contactText}>{data.phone || "+1234567890"}</Text>
           <Text style={styles.contactText}>{data.location || "Location"}</Text>
           {data.portfolio && (
-            <Link src={data.portfolio} style={styles.contactText}>Portfolio</Link>
+            <Link src={data.portfolio} style={styles.contactText}>
+              Portfolio
+            </Link>
           )}
           {data.linkedin && (
-            <Link src={data.linkedin} style={styles.contactText}>LinkedIn</Link>
+            <Link src={data.linkedin} style={styles.contactText}>
+              LinkedIn
+            </Link>
           )}
           {data.github && (
-            <Link src={data.github} style={styles.contactText}>GitHub</Link>
+            <Link src={data.github} style={styles.contactText}>
+              GitHub
+            </Link>
           )}
         </View>
 
@@ -86,9 +92,7 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
             <Text style={styles.sectionTitle}>Skills</Text>
             {data.skills.map(
               (
-                skill:
-                  | string
-                  | { value?: string; label?: string; [key: string]: any },
+                skill: string | { value?: string; label?: string },
                 i: number
               ) => (
                 <Text style={styles.skillList} key={i}>
@@ -120,10 +124,8 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
             <Text style={styles.sectionTitle}>Certifications</Text>
             {data.certificates.map(
               (
-                cert:
-                  | string
-                  | { name?: string; issuer?: string; [key: string]: any },
-                i: number
+              cert: string | { name?: string; issuer?: string },
+              i: number
               ) => (
                 <Text key={i} style={styles.contactText}>
                   {typeof cert === "object"
@@ -164,7 +166,7 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
         {data.experience?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Experience</Text>
-            {data.experience.map((exp: any, i: number) => (
+            {data.experience.map((exp, i: number) => (
               <View key={i} style={styles.item}>
                 <Text>
                   <Text style={{ fontWeight: "bold" }}>{exp.role}</Text> at{" "}
@@ -183,7 +185,7 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
         {data.education?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Education</Text>
-            {data.education.map((edu: any, i: number) => (
+            {data.education.map((edu, i: number) => (
               <View key={i} style={styles.item}>
                 <Text>
                   <Text style={{ fontWeight: "bold" }}>{edu.degree}</Text>,{" "}
@@ -201,15 +203,10 @@ const StylishTemplate = ({ data }: { data: CvFormData }) => (
         {data.projects?.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Projects</Text>
-            {data.projects.map((proj: any, i: number) => (
+            {data.projects.map((proj, i: number) => (
               <View key={i} style={styles.item}>
                 <Text style={{ fontWeight: "bold" }}>{proj.name}</Text>
                 <Text>{proj.description}</Text>
-                {proj.tools && (
-                  <Text style={{ fontSize: 10, color: "#666" }}>
-                    Tools: {proj.tools.join(", ")}
-                  </Text>
-                )}
               </View>
             ))}
           </View>

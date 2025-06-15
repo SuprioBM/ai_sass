@@ -28,8 +28,12 @@ export default function ResumeBulletGenerator() {
 
       const data = await res.json();
       setResult(data.bulletPoints);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }

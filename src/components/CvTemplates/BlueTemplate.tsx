@@ -7,7 +7,6 @@ import {
   View,
   StyleSheet,
   Font,
-  Image,
   Link,
 } from "@react-pdf/renderer";
 import { CvFormData } from "@/types/Cv";
@@ -176,7 +175,7 @@ export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
             {data.experience?.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Experience</Text>
-                {data.experience.map((exp: any, i: number) => (
+                {data.experience.map((exp, i: number) => (
                   <View key={i} style={{ marginBottom: 10 }}>
                     <View style={styles.itemHeader}>
                       <Text style={styles.itemTitle}>
@@ -206,7 +205,7 @@ export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
             {data.education?.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Education</Text>
-                {data.education.map((edu: any, i: number) => (
+                {data.education.map((edu, i: number) => (
                   <View key={i} style={{ marginBottom: 10 }}>
                     <View style={styles.itemHeader}>
                       <Text style={styles.itemTitle}>{edu.degree}</Text>
@@ -227,9 +226,9 @@ export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
             {data.skills?.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Skills</Text>
-                {data.skills.map((skill: any, i: number) => (
+                {data.skills.map((skill: string | { value: string }, i: number) => (
                   <Text key={i} style={styles.skillItem}>
-                    • {typeof skill === "object" ? skill.value : skill}
+                    • {typeof skill === "object" && skill !== null && "value" in skill ? skill.value : skill}
                   </Text>
                 ))}
               </View>
@@ -239,7 +238,7 @@ export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
             {data.certificates?.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Certifications</Text>
-                {data.certificates.map((cert: any, i: number) => (
+                {data.certificates.map((cert, i: number) => (
                   <Text key={i} style={styles.skillItem}>
                     • {cert.name} - {cert.issuer || "Self-issued"}
                   </Text>
@@ -251,7 +250,7 @@ export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
             {data.languages?.length > 0 && (
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Languages</Text>
-                {data.languages.map((lang: any, i: number) => (
+                {data.languages.map((lang, i: number) => (
                   <Text key={i} style={styles.skillItem}>
                     • {lang}
                   </Text>

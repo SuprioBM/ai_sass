@@ -147,6 +147,7 @@ export default function MainWizard() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const router = useRouter();
   const { setAiData } = useCvWizard();
+  const [error,SetError] = useState<Error>()
   const [aiPreviewImage, setAiPreviewImage] = useState<string | null>(null);
 
 
@@ -311,7 +312,7 @@ export default function MainWizard() {
                 await onSubmit(values);
                 setConfirmed(true);
               } catch (error) {
-                
+                SetError(error as Error)
                 setConfirmed(false);
               } finally {
                 setLoadingLocal(false);

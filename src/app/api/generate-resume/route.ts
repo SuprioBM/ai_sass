@@ -13,10 +13,10 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ bulletPoints }), {
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Bullet Point API Error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Unknown error occurred" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error occurred" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

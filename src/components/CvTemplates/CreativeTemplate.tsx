@@ -97,7 +97,7 @@ export const CreativeTemplate = ({ data }: { data: CvFormData }) => (
         {data.experience?.length > 0 && (
           <>
             <Text style={creativeStyles.sectionTitle}>Experience</Text>
-            {data.experience.map((exp: any, i: number) => (
+            {data.experience.map((exp, i: number) => (
               <View key={i}>
                 <Text style={creativeStyles.item}>
                   {exp.role} at {exp.company}
@@ -117,7 +117,7 @@ export const CreativeTemplate = ({ data }: { data: CvFormData }) => (
         {data.education?.length > 0 && (
           <>
             <Text style={creativeStyles.sectionTitle}>Education</Text>
-            {data.education.map((edu: any, i: number) => (
+            {data.education.map((edu, i: number) => (
               <View key={i}>
                 <Text style={creativeStyles.item}>
                   {edu.degree}, {edu.school}
@@ -134,7 +134,7 @@ export const CreativeTemplate = ({ data }: { data: CvFormData }) => (
         {data.projects?.length > 0 && (
           <>
             <Text style={creativeStyles.sectionTitle}>Projects</Text>
-            {data.projects.map((proj: any, i: number) => (
+            {data.projects.map((proj, i: number) => (
               <View key={i}>
                 <Text style={creativeStyles.item}>{proj.name}</Text>
                 <Text style={creativeStyles.item}>{proj.description}</Text>
@@ -147,7 +147,7 @@ export const CreativeTemplate = ({ data }: { data: CvFormData }) => (
         {data.certificates?.length > 0 && (
           <>
             <Text style={creativeStyles.sectionTitle}>Certifications</Text>
-            {data.certificates.map((cert: any, i: number) => (
+            {data.certificates.map((cert, i: number) => (
               <View key={i}>
                 <Text style={creativeStyles.item}>{cert.name}</Text>
                 <Text style={creativeStyles.item}>{cert.issuer}</Text>

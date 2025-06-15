@@ -132,7 +132,7 @@ const ModernTemplate = ({ data }: { data: CvFormData }) => (
           {data.experience?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Experience</Text>
-              {data.experience.map((exp: any, i: number) => (
+              {data.experience.map((exp, i: number) => (
                 <View key={i} style={styles.item}>
                   <Text>
                     <Text style={{ fontWeight: "bold" }}>{exp.role}</Text> at{" "}
@@ -150,15 +150,10 @@ const ModernTemplate = ({ data }: { data: CvFormData }) => (
           {data.projects?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Projects</Text>
-              {data.projects.map((proj: any, i: number) => (
+              {data.projects.map((proj, i: number) => (
                 <View key={i} style={styles.item}>
                   <Text style={{ fontWeight: "bold" }}>{proj.name}</Text>
                   <Text>{proj.description}</Text>
-                  {proj.tools && (
-                    <Text style={{ fontSize: 10, color: "#666" }}>
-                      Tools: {proj.tools.join(", ")}
-                    </Text>
-                  )}
                 </View>
               ))}
             </View>
@@ -167,7 +162,7 @@ const ModernTemplate = ({ data }: { data: CvFormData }) => (
           {data.certificates?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Certifications</Text>
-              {data.certificates.map((cert: any, i: number) => (
+              {data.certificates.map((cert, i: number) => (
                 <Text key={i} style={styles.item}>
                   •{" "}
                   {typeof cert === "object"
@@ -186,7 +181,7 @@ const ModernTemplate = ({ data }: { data: CvFormData }) => (
           {data.education?.length > 0 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Education</Text>
-              {data.education.map((edu: any, i: number) => (
+              {data.education.map((edu, i: number) => (
                 <View key={i} style={styles.item}>
                   <Text>
                     <Text style={{ fontWeight: "bold" }}>{edu.degree}</Text>,{" "}
@@ -202,12 +197,12 @@ const ModernTemplate = ({ data }: { data: CvFormData }) => (
 
           {data.skills?.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Skills</Text>
-              {data.skills.map(
+                <Text style={styles.sectionTitle}>Skills</Text>
+                {data.skills.map(
                 (
                   skill:
-                    | string
-                    | { value?: string; label?: string; [key: string]: any },
+                  | string
+                  | { value?: string; label?: string },
                   i: number
                 ) => (
                   <Text key={i}>
