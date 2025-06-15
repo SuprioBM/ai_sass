@@ -39,12 +39,12 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
     const onTouchMove = (e: TouchEvent) => {
       const deltaY = startY - e.touches[0].clientY;
+      const scrollEl = scrollRef.current;
+      const isScrollingDown = deltaY > 0;
+      const isScrollingUp = deltaY < 0;
+      const atTop = scrollEl?.scrollTop === 0;
 
-      const shouldPrevent =
-        scrollAccumulator.current < 1 ||
-        (scrollAccumulator.current === 1 && deltaY < 0);
-
-      if (shouldPrevent) {
+      if (scrollAccumulator.current < 1 && isScrollingDown) {
         e.preventDefault();
         scrollAccumulator.current = Math.min(
           1,
@@ -54,7 +54,18 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         setIsFullyOpen(scrollAccumulator.current === 1);
       }
 
-      startY = e.touches[0].clientY;
+      if (scrollAccumulator.current === 1 && isScrollingUp && atTop) {
+        // Only reverse when at top and swiping down
+        e.preventDefault();
+        scrollAccumulator.current = Math.max(
+          0,
+          scrollAccumulator.current + deltaY * 0.01
+        );
+        progress.set(scrollAccumulator.current);
+        setIsFullyOpen(false);
+      }
+
+      startY = e.touches[0].clientY; // update for next move
     };
     
 
