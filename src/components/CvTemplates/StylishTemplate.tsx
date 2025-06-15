@@ -1,3 +1,4 @@
+import { CvFormData } from "@/types/Cv";
 import { Document, Page, Text, View, StyleSheet,Link } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const StylishTemplate = ({ data }: { data: any }) => (
+const StylishTemplate = ({ data }: { data: CvFormData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Left Sidebar */}
@@ -137,10 +138,10 @@ const StylishTemplate = ({ data }: { data: any }) => (
         )}
 
         {/* Hobbies */}
-        {data.hobbies?.length > 0 && (
+        {(data.hobbies ?? []).length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Hobbies</Text>
-            {data.hobbies.map((hobby: string, i: number) => (
+            {(data.hobbies ?? []).map((hobby: string, i: number) => (
               <Text key={i} style={styles.contactText}>
                 {hobby}
               </Text>

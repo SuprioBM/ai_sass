@@ -1,3 +1,4 @@
+import { CvFormData } from "@/types/Cv";
 import { Document, Page, Text, Link, View, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
@@ -74,7 +75,7 @@ const formatDate = (dateStr: string | undefined | null) => {
   return date.toLocaleString("default", { month: "short", year: "numeric" });
 };
 
-const ModernTemplate = ({ data }: { data: any }) => (
+const ModernTemplate = ({ data }: { data: CvFormData }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}

@@ -70,7 +70,7 @@ export default function LoginPage() {
           Send Verification Email
         </Button>
         <p className="text-sm text-center text-muted-foreground">
-          Don't have an account?{" "}
+          not have an account?{" "}
           <Button
             variant="link"
             onClick={() => router.push("/auth/signup")}

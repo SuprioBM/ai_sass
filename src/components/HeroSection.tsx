@@ -98,7 +98,6 @@ type NavbarProps = {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-    [key: string]: any;
   } | null;
 };
 

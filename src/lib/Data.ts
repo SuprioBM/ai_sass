@@ -77,6 +77,7 @@ export const dummyData = {
   ],
 
   languages: ["English", "Bengali", "Hindi"],
+  
 };
 
 

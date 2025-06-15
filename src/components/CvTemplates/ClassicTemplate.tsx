@@ -1,3 +1,4 @@
+import { CvFormData } from "@/types/Cv";
 import { Document, Page, Text, Link,View, StyleSheet } from "@react-pdf/renderer";
 
 const classicStyles = StyleSheet.create({
@@ -31,7 +32,7 @@ const classicStyles = StyleSheet.create({
   
 });
 
-export const ClassicTemplate = ({ data }: { data: any }) => (
+export const ClassicTemplate = ({ data }: { data: CvFormData }) => (
   <Document>
     <Page size="A4" style={classicStyles.page}>
       <Text style={classicStyles.name}>{data.name}</Text>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, SubmitHandler,FormProvider, useFormContext } from "react-hook-form";
+import { useForm, SubmitHandler,FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -25,6 +25,7 @@ import JobDescriptionStep from "./WizardSteps/JobDescription";
 import { useRouter } from "next/navigation";
 import { useCvWizard } from "@/context/CvWizardContext";
 import { generateImageFromPdfBlob } from "@/lib/pdftoimage";
+import { CvFormData } from "@/types/Cv";
 
 
 
@@ -138,7 +139,7 @@ const initialFormData: FormData = {
 
 export default function MainWizard() {
   const [step, setStep] = useState(1);
-  const [aiGeneratedData, setAiGeneratedData] = useState<any>(null);
+  const [aiGeneratedData, setAiGeneratedData] = useState<CvFormData | null>(null);
   const [loading, setLoading] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [loadingLocal, setLoadingLocal] = useState(false);
@@ -154,7 +155,6 @@ export default function MainWizard() {
     handleSubmit,
     formState: { errors },
     control,
-    setValue,
     getValues,
 } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -200,28 +200,28 @@ export default function MainWizard() {
         }
     };
     
-    async function FinalCv(selectedTemplate: string | null, aigeneratedData: any) {
-       console.log("FinalCv called with template:", selectedTemplate, "and AI data:", aigeneratedData);
-       
-        if (!selectedTemplate || !aigeneratedData) {
-            alert("Please select a template and ensure AI data is available.");
-            return;
+    async function FinalCv(selectedTemplate: string | null, aigeneratedData: CvFormData | null) {
+           console.log("FinalCv called with template:", selectedTemplate, "and AI data:", aigeneratedData);
+           
+            if (!selectedTemplate || !aigeneratedData) {
+                alert("Please select a template and ensure AI data is available.");
+                return;
+            }
+    
+            const TemplateComponent = templates[selectedTemplate as keyof typeof templates];
+            console.log("Template Component:", TemplateComponent);
+            if (!TemplateComponent) {
+                alert("Selected template not found.");
+                return;
+            }
+            const blob = await pdf(<TemplateComponent data={aigeneratedData} />).toBlob();
+            const imageUrl = await generateImageFromPdfBlob(blob);
+            const pdfBlobUrl = URL.createObjectURL(blob);
+            setPdfUrl(pdfBlobUrl);
+            setAiPreviewImage(imageUrl);
+            setStep(11);
+    
         }
-
-        const TemplateComponent = templates[selectedTemplate as keyof typeof templates];
-        console.log("Template Component:", TemplateComponent);
-        if (!TemplateComponent) {
-            alert("Selected template not found.");
-            return;
-        }
-        const blob = await pdf(<TemplateComponent data={aigeneratedData} />).toBlob();
-        const imageUrl = await generateImageFromPdfBlob(blob);
-        const pdfBlobUrl = URL.createObjectURL(blob);
-        setPdfUrl(pdfBlobUrl);
-        setAiPreviewImage(imageUrl);
-        setStep(11);
-
-    }
     
 
 
@@ -310,8 +310,8 @@ export default function MainWizard() {
               try {
                 await onSubmit(values);
                 setConfirmed(true);
-              } catch (e) {
-                // handle error (toast, alert etc)
+              } catch (error) {
+                
                 setConfirmed(false);
               } finally {
                 setLoadingLocal(false);

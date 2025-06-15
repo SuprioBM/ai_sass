@@ -8,6 +8,7 @@ import { CreativeTemplate } from "@/components/CvTemplates/CreativeTemplate";
 import StylishTemplate from "@/components/CvTemplates/StylishTemplate";
 import MinimalisticTemplate from "@/components/CvTemplates/BlueTemplate";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import { CvFormData } from "@/types/Cv";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
@@ -15,33 +16,33 @@ const templates = [
   {
     id: "ModernTemplate",
     label: "Modern Classic",
-    component: (data: any) => <ModernTemplate data={data} />,
+    component: (data: CvFormData) => <ModernTemplate data={data} />,
   },
   {
     id: "ClassicTemplate",
     label: "Clean Pro",
-    component: (data: any) => <ClassicTemplate data={data} />,
+    component: (data: CvFormData) => <ClassicTemplate data={data} />,
   },
   {
     id: "CreativeTemplate",
     label: "Elegant Bold",
-    component: (data: any) => <CreativeTemplate data={data} />,
+    component: (data: CvFormData) => <CreativeTemplate data={data} />,
   },
   {
     id: "StylishTemplate",
     label: "Stylish Template",
-    component: (data: any) => <StylishTemplate data={data} />,
+    component: (data: CvFormData) => <StylishTemplate data={data} />,
   },
   {
     id: "MinimalisticTemplate",
     label: "Minimalistic Blue",
-    component: (data: any) => <MinimalisticTemplate data={data} />,
+    component: (data: CvFormData) => <MinimalisticTemplate data={data} />,
   },
 ];
 
 interface TemplatePreviewSelectorProps {
   onSelect?: (templateId: string) => void;
-  dummyData: any;
+  dummyData: CvFormData;
   showGenerateButton?: boolean;
 }
 

@@ -21,12 +21,7 @@ export default function JobDescriptionStep({
 }: JobDescriptionStepProps) {
   const {trigger} = useFormContext<FormData>();
 
-  const handleNext = async () => {
-    const valid = await trigger("jobDescription");
-    if (valid) {
-      onNext(); // form state is already stored in react-hook-form
-    }
-  };
+ 
 
   return (
     <div className="space-y-4">

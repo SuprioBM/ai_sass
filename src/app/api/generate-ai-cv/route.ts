@@ -63,79 +63,104 @@ export async function POST(req: NextRequest) {
     `;
     
 
+    type Education = {
+      school?: string;
+      degree?: string;
+      startDate?: string;
+      endDate?: string;
+    };
+
+    type Experience = {
+      company?: string;
+      role?: string;
+      startDate?: string;
+      endDate?: string;
+      description?: string;
+    };
+
+    type Project = {
+      name?: string;
+      description?: string;
+    };
+
+    type Certificate = {
+      name?: string;
+      issuer?: string;
+    };
+
     const userPrompt = `
-Job Description:
-${jobDescription.trim()}
+  Job Description:
+  ${jobDescription.trim()}
 
-Candidate Information:
-Name: ${name.trim()}
-Email: ${email.trim()}
-Phone: ${phone?.trim() || "N/A"}
-Location: ${location?.trim() || "N/A"}
-LinkedIn: ${linkedin?.trim() || "N/A"}
-GitHub: ${github?.trim() || "N/A"}
-Portfolio: ${portfolio?.trim() || "N/A"}
-Skills: ${skills.map((s: string) => s.trim()).join(", ") || "N/A"}
-Languages: ${languages.map((l: string) => l.trim()).join(", ") || "N/A"}
+  Candidate Information:
+  Name: ${name.trim()}
+  Email: ${email.trim()}
+  Phone: ${phone?.trim() || "N/A"}
+  Location: ${location?.trim() || "N/A"}
+  LinkedIn: ${linkedin?.trim() || "N/A"}
+  GitHub: ${github?.trim() || "N/A"}
+  Portfolio: ${portfolio?.trim() || "N/A"}
+  Skills: ${skills.map((s: string) => s.trim()).join(", ") || "N/A"}
+  Languages: ${languages.map((l: string) => l.trim()).join(", ") || "N/A"}
 
-Education:
-${
-  education.length > 0
-    ? education
-        .map(
-          (e: any) =>
-            `- ${e.degree?.trim() || "N/A"} from ${
-              e.school?.trim() || "N/A"
-            } (${e.startDate || "N/A"} - ${e.endDate || "N/A"})`
-        )
-        .join("\n")
+  Education:
+  ${
+    (education as Education[]).length > 0
+    ? (education as Education[])
+      .map(
+        (e) =>
+        `- ${e.degree?.trim() || "N/A"} from ${
+          e.school?.trim() || "N/A"
+        } (${e.startDate || "N/A"} - ${e.endDate || "N/A"})`
+      )
+      .join("\n")
     : "N/A"
-}
+  }
 
-Experience:
-${
-  experience.length > 0
-    ? experience
-        .map(
-          (e: any) =>
-            `- ${e.role?.trim() || "N/A"} at ${e.company?.trim() || "N/A"} (${
-              e.startDate || "N/A"
-            } - ${e.endDate || "N/A"}): ${e.description?.trim() || ""}`
-        )
-        .join("\n")
+  Experience:
+  ${
+    (experience as Experience[]).length > 0
+    ? (experience as Experience[])
+      .map(
+        (e) =>
+        `- ${e.role?.trim() || "N/A"} at ${e.company?.trim() || "N/A"} (${
+          e.startDate || "N/A"
+        } - ${e.endDate || "N/A"}): ${e.description?.trim() || ""}`
+      )
+      .join("\n")
     : "N/A"
-}
+  }
 
-Projects:
-${
-  projects.length > 0
-    ? projects
-        .map(
-          (p: any) =>
-            `- ${p.name?.trim() || "N/A"}: ${p.description?.trim() || ""}`
-        )
-        .join("\n")
+  Projects:
+  ${
+    (projects as Project[]).length > 0
+    ? (projects as Project[])
+      .map(
+        (p) =>
+        `- ${p.name?.trim() || "N/A"}: ${p.description?.trim() || ""}`
+      )
+      .join("\n")
     : "N/A"
-}
+  }
 
-Certificates:
-${
-  certificates.length > 0
-    ? certificates
-        .map(
-          (c: any) =>
-            `- ${c.name?.trim() || "N/A"}: ${c.issuer?.trim() || "N/A"}`
-        )
-        .join("\n")
+  Certificates:
+  ${
+    (certificates as Certificate[]).length > 0
+    ? (certificates as Certificate[])
+      .map(
+        (c) =>
+        `- ${c.name?.trim() || "N/A"}: ${c.issuer?.trim() || "N/A"}`
+      )
+      .join("\n")
     : "N/A"
-}
+  }
 
-Return the following JSON wrapped in triple backticks:
-\`\`\`json
-{
-  "summary": "...",
-  "skills": [...],
-  "experience": [
+  Return the following JSON wrapped in triple backticks:
+  \`\`\`json
+  {
+    "summary": "...",
+    "skills": [...],
+    "experience": [
     {
       "company": "...",
       "role": "...",
@@ -143,37 +168,37 @@ Return the following JSON wrapped in triple backticks:
       "endDate": "...",
       "description": "..."
     }
-  ],
-  "education": [
+    ],
+    "education": [
     {
       "school": "...",
       "degree": "...",
       "startDate": "...",
       "endDate": "..."
     }
-  ],
-  "projects": [
+    ],
+    "projects": [
     {
       "name": "...",
       "description": "..."
     }
-  ],
-  "certificates": [
+    ],
+    "certificates": [
     {
       "name": "...",
       "issuer": "..."
     }
-  ],
-  "name": "...",
-  "email": "...",
-  "phone": "...",
-  "location": "...",
-  "linkedin": "...",
-  "github": "...",
-  "portfolio": "...",
-  "languages": ["..."]
-}
-\`\`\`
+    ],
+    "name": "...",
+    "email": "...",
+    "phone": "...",
+    "location": "...",
+    "linkedin": "...",
+    "github": "...",
+    "portfolio": "...",
+    "languages": ["..."]
+  }
+  \`\`\`
     `;
 
     const aiResponse = await chatWithLLM({

@@ -10,6 +10,7 @@ import {
   Image,
   Link,
 } from "@react-pdf/renderer";
+import { CvFormData } from "@/types/Cv";
 
 // Register fonts (you'll need to host these fonts locally or link to them)
 // You can download Roboto fonts or use any professional font you like
@@ -127,16 +128,13 @@ const styles = StyleSheet.create({
   }
 });
 
-export default function MinimalisticTemplate({ data }: { data: any }) {
+export default function MinimalisticTemplate({ data }: { data: CvFormData }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* HEADER: Name, Title & Contact */}
         <View style={{ marginBottom: 12 }}>
           <Text style={styles.header}>{data.name || "Your Name"}</Text>
-          <Text style={styles.jobTitle}>
-            {data.jobTitle || "Your Desired Job Title"}
-          </Text>
           <Link src={`mailto:${data.email}`} style={styles.contactInfo}>
                       {data.email || "email@example.com"}
                     </Link>

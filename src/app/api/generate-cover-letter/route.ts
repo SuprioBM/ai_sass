@@ -26,10 +26,10 @@ Job Description: ${jobDescription}
     return new Response(JSON.stringify({ coverLetter }), {
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Cover Letter API Error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Unknown error occurred" }),
+      JSON.stringify({ error: typeof error === "object" && error !== null && "message" in error ? (error as { message?: string }).message : "Unknown error occurred" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

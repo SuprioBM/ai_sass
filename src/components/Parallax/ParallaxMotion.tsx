@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
-import { NavbarDemo } from "../ResizeableNavbar";
 
 interface ParallaxWrapperProps {
   children: [React.ReactNode, React.ReactElement<{ scrollRef?: React.RefObject<HTMLDivElement | null> }>];

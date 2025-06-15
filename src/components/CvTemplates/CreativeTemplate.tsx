@@ -1,3 +1,4 @@
+import { CvFormData } from "@/types/Cv";
 import { Document, Page, Text,Link, View, StyleSheet } from "@react-pdf/renderer";
 
 const creativeStyles = StyleSheet.create({
@@ -39,7 +40,7 @@ const creativeStyles = StyleSheet.create({
   },
 });
 
-export const CreativeTemplate = ({ data }: { data: any }) => (
+export const CreativeTemplate = ({ data }: { data: CvFormData }) => (
   <Document>
     <Page size="A4" style={creativeStyles.page}>
       {/* Sidebar */}

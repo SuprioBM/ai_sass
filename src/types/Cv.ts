@@ -14,13 +14,6 @@ type Experience = {
   description: string;
 };
 
-type Skill = {
-  value: string;
-};
-
-type Language = {
-  value: string;
-};
 
 type Project = {
   name: string;
@@ -47,4 +40,5 @@ export type CvFormData = {
   languages: string[];
   projects: Project[];
   certificates: Certificate[];
+  hobbies?: string[],
 };

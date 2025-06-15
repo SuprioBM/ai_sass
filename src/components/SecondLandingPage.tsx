@@ -47,8 +47,9 @@ export default function SecondLandingPage({
               scrollRef={scrollRef}
               className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[450px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/prompt1.png')] bg-cover bg-center border border-white/30 mb-20"
               backgroundSpeed={0.2}
-              children={undefined}
-            ></ParallaxBackground>
+            >
+              <div></div>
+            </ParallaxBackground>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 px-4 sm:px-10 max-w-5xl mx-auto">
               <ParallaxX
@@ -169,7 +170,7 @@ export default function SecondLandingPage({
                   skewX: -5,
                   skewY: 4,
                 },
-              ].map(({ title, desc, icon, skewX, skewY }, i) => (
+              ].map(({ title, desc, skewX, skewY }, i) => (
                 <ParallaxSkew
                   key={i}
                   scrollRef={scrollRef}
