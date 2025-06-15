@@ -1,0 +1,4 @@
+prisma/
+src/generated/
+src/lib/
+src/components/ui/
