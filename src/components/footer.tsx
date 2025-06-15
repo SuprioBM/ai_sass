@@ -5,7 +5,7 @@ export default function FuturisticFooter() {
         {/* Branding */}
         <div className="space-y-4">
           <h2 className="text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-            JobForgeAI
+            CvWizardAI
           </h2>
           <p className="text-gray-300 text-sm">
             Your AI-powered career assistant — auto-optimize resumes, master job
@@ -63,7 +63,7 @@ export default function FuturisticFooter() {
       </div>
 
       <div className="border-t border-white/10 mt-16 pt-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} JobForgeAI — Built with 💡 and 🔥 by
+        © {new Date().getFullYear()} CvWizardAI — Built with 💡 and 🔥 by
         Suprio.
       </div>
     </footer>

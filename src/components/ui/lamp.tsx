@@ -101,7 +101,7 @@ const LampDemo: React.FC = () => {
         }}
         className="bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
       >
-        Welcome to your Micro SaaS App
+        Build smarter careers with AI.
         <AuthButtons />
       </motion.h1>
 
