@@ -40,7 +40,11 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
     const onTouchMove = (e: TouchEvent) => {
       const deltaY = startY - e.touches[0].clientY;
 
-      if (scrollAccumulator.current < 1) {
+      const shouldPrevent =
+        scrollAccumulator.current < 1 ||
+        (scrollAccumulator.current === 1 && deltaY < 0);
+
+      if (shouldPrevent) {
         e.preventDefault();
         scrollAccumulator.current = Math.min(
           1,
@@ -50,18 +54,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         setIsFullyOpen(scrollAccumulator.current === 1);
       }
 
-      if (scrollAccumulator.current === 1 && deltaY < 0) {
-        // Swiping down to close
-        e.preventDefault();
-        scrollAccumulator.current = Math.max(
-          0,
-          scrollAccumulator.current + deltaY * 0.01
-        );
-        progress.set(scrollAccumulator.current);
-        setIsFullyOpen(false);
-      }
-
-      startY = e.touches[0].clientY; // update for next move
+      startY = e.touches[0].clientY;
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -94,22 +87,26 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       }
     };
 
-    if (isMobile) {
-      window.addEventListener("touchstart", onTouchStart, { passive: false });
-      window.addEventListener("touchmove", onTouchMove, { passive: false });
+    // 🧠 Updated attachment logic
+    const el = scrollRef.current;
+
+    if (isMobile && el) {
+      el.addEventListener("touchstart", onTouchStart, { passive: false });
+      el.addEventListener("touchmove", onTouchMove, { passive: false });
     } else {
       window.addEventListener("wheel", onWheel, { passive: false });
     }
 
     return () => {
-      if (isMobile) {
-        window.removeEventListener("touchstart", onTouchStart);
-        window.removeEventListener("touchmove", onTouchMove);
+      if (isMobile && el) {
+        el.removeEventListener("touchstart", onTouchStart);
+        el.removeEventListener("touchmove", onTouchMove);
       } else {
         window.removeEventListener("wheel", onWheel);
       }
     };
   }, [progress, isLoggedIn]);
+  
   
   useEffect(() => {
     if (typeof window === "undefined") return;
