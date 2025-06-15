@@ -18,7 +18,7 @@ export default function RootLayout({
   
   return (
     <html lang="en" className="scroll-smooth dark">
-      <link rel="icon" href="./favicon.ico" type="image/x-icon" className="w-10/12"></link>
+      <link rel="icon" href="./favicon.ico" type="image/x-icon"></link>
       <body>
       <CvWizardProvider>
        <SessionProvider>
