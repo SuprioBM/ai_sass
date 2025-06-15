@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 
 interface ParallaxWrapperProps {
@@ -18,53 +18,55 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   const progress = useMotionValue(0);
   const scrollAccumulator = useRef(0);
   const [isFullyOpen, setIsFullyOpen] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Motion transforms for the two triangles
   const leftX = useTransform(progress, [0, 1], ["0vw", "-50vw"]);
   const leftY = useTransform(progress, [0, 1], ["0vh", "-50vh"]);
   const rightX = useTransform(progress, [0, 1], ["0vw", "50vw"]);
   const rightY = useTransform(progress, [0, 1], ["0vh", "50vh"]);
-
-  const updateProgress = useCallback(
-    (delta: number) => {
-      scrollAccumulator.current = Math.min(
-        1,
-        Math.max(0, scrollAccumulator.current + delta * 0.01)
-      );
-      progress.set(scrollAccumulator.current);
-      setIsFullyOpen(scrollAccumulator.current === 1);
-    },
-    [progress]
-  );
 
   useEffect(() => {
     if (!isLoggedIn) return;
 
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
     let startY = 0;
-    let ticking = false;
 
     const onTouchStart = (e: TouchEvent) => {
       startY = e.touches[0].clientY;
     };
 
+    let ticking = false;
+
+    const updateProgress = (deltaY: number) => {
+      scrollAccumulator.current = Math.min(
+        1,
+        Math.max(0, scrollAccumulator.current + deltaY * 0.01)
+      );
+      progress.set(scrollAccumulator.current);
+      setIsFullyOpen(scrollAccumulator.current === 1);
+    };
+
     const onTouchMove = (e: TouchEvent) => {
-      const scrollEl = scrollRef.current;
+      if(e.cancelable) e.preventDefault();
       const deltaY = startY - e.touches[0].clientY;
+      const scrollEl = scrollRef.current;
       const isScrollingDown = deltaY > 0;
       const isScrollingUp = deltaY < 0;
-      const atTop = scrollEl ? scrollEl.scrollTop <= 2 : false;
+      const atTop = scrollEl?.scrollTop === 0;
+      const clampedDelta = Math.max(-30, Math.min(30, deltaY));
+      updateProgress(clampedDelta);
 
       if (
         (scrollAccumulator.current < 1 && isScrollingDown) ||
         (scrollAccumulator.current === 1 && isScrollingUp && atTop)
       ) {
-        if (e.cancelable) e.preventDefault();
+        e.preventDefault();
 
         if (!ticking) {
           requestAnimationFrame(() => {
-            const clampedDelta = Math.max(-30, Math.min(30, deltaY));
-            updateProgress(clampedDelta);
+            updateProgress(deltaY);
             ticking = false;
           });
           ticking = true;
@@ -73,22 +75,37 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       startY = e.touches[0].clientY;
     };
+    
 
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
       if (!scrollEl) return;
+      const clampedDelta = Math.max(-30, Math.min(30, e.deltaY));
+      updateProgress(clampedDelta);
 
-      const deltaY = e.deltaY;
-      const clampedDelta = Math.max(-30, Math.min(30, deltaY));
-      const scrollingUp = deltaY < 0;
-      const atTop = scrollEl.scrollTop <= 2;
+      const scrollingUp = e.deltaY < 0;
+      const atTop = scrollEl.scrollTop <= 1;
 
-      if (
-        (scrollAccumulator.current < 1 && !scrollingUp) ||
-        (scrollAccumulator.current === 1 && scrollingUp && atTop)
-      ) {
+      if (scrollAccumulator.current < 1) {
         e.preventDefault();
-        updateProgress(clampedDelta);
+        scrollAccumulator.current = Math.min(
+          1,
+          Math.max(0, scrollAccumulator.current + e.deltaY * 0.002)
+        );
+        progress.set(scrollAccumulator.current);
+        setIsFullyOpen(scrollAccumulator.current === 1);
+        return;
+      }
+
+      if (scrollAccumulator.current === 1 && scrollingUp && atTop) {
+        e.preventDefault();
+        scrollAccumulator.current = Math.max(
+          0,
+          scrollAccumulator.current - Math.abs(e.deltaY) * 0.002
+        );
+        progress.set(scrollAccumulator.current);
+        setIsFullyOpen(false);
+        return;
       }
     };
 
@@ -107,13 +124,20 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         window.removeEventListener("wheel", onWheel);
       }
     };
-  }, [isLoggedIn, updateProgress]);
-
+  }, [progress, isLoggedIn]);
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
-    document.body.style.overflow = isMobile || isFullyOpen ? "auto" : "hidden";
+
+    if (isMobile) {
+      // On mobile, always allow scrolling
+      document.body.style.overflow = "auto";
+    } else {
+      // On desktop, toggle based on isFullyOpen
+      document.body.style.overflow = isFullyOpen ? "auto" : "hidden";
+    }
 
     return () => {
       document.body.style.overflow = "auto";
@@ -125,7 +149,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       scrollAccumulator.current = 0;
       progress.set(0);
     });
-  }, [progress]);
+  }, []);
 
   return (
     <div
@@ -133,18 +157,19 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       style={{ transform: "translateZ(0)" }}
     >
       <div style={{ height: "1px", pointerEvents: "none" }} />
-
+      {/* Scrollable section (revealed after parallax opens) */}
       <div
         id="scroll-section"
         ref={scrollRef}
         className="absolute inset-0 z-0 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ height: "100vh" }}
+        style={{ height: "100vh" }} // ensure full viewport height for scroll
       >
         {React.cloneElement(children[1], {
-          scrollRef: scrollRef,
+          scrollRef: scrollRef, // pass the whole ref object
         })}
       </div>
 
+      {/* Top-left triangle */}
       <motion.div
         initial={{ x: 0, y: 0 }}
         className="absolute top-0 bottom-0 left-0 w-screen h-screen z-10"
@@ -160,6 +185,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         <div className="flex items-center justify-center">{children[0]}</div>
       </motion.div>
 
+      {/* Bottom-right triangle */}
       <motion.div
         initial={{ x: 0, y: 0 }}
         className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
