@@ -49,14 +49,11 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      if(e.cancelable) e.preventDefault();
       const deltaY = startY - e.touches[0].clientY;
       const scrollEl = scrollRef.current;
       const isScrollingDown = deltaY > 0;
       const isScrollingUp = deltaY < 0;
       const atTop = scrollEl?.scrollTop === 0;
-      const clampedDelta = Math.max(-30, Math.min(30, deltaY));
-      updateProgress(clampedDelta);
 
       if (
         (scrollAccumulator.current < 1 && isScrollingDown) ||
@@ -80,11 +77,9 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
       if (!scrollEl) return;
-      const clampedDelta = Math.max(-30, Math.min(30, e.deltaY));
-      updateProgress(clampedDelta);
 
       const scrollingUp = e.deltaY < 0;
-      const atTop = scrollEl.scrollTop <= 1;
+      const atTop = scrollEl.scrollTop <= 0;
 
       if (scrollAccumulator.current < 1) {
         e.preventDefault();
@@ -143,13 +138,6 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       document.body.style.overflow = "auto";
     };
   }, [isFullyOpen]);
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      scrollAccumulator.current = 0;
-      progress.set(0);
-    });
-  }, []);
 
   return (
     <div
