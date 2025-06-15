@@ -56,6 +56,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       startY = e.touches[0].clientY;
     };
+    
 
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
@@ -87,26 +88,22 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       }
     };
 
-    // 🧠 Updated attachment logic
-    const el = scrollRef.current;
-
-    if (isMobile && el) {
-      el.addEventListener("touchstart", onTouchStart, { passive: false });
-      el.addEventListener("touchmove", onTouchMove, { passive: false });
+    if (isMobile) {
+      window.addEventListener("touchstart", onTouchStart, { passive: false });
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
     } else {
       window.addEventListener("wheel", onWheel, { passive: false });
     }
 
     return () => {
-      if (isMobile && el) {
-        el.removeEventListener("touchstart", onTouchStart);
-        el.removeEventListener("touchmove", onTouchMove);
+      if (isMobile) {
+        window.removeEventListener("touchstart", onTouchStart);
+        window.removeEventListener("touchmove", onTouchMove);
       } else {
         window.removeEventListener("wheel", onWheel);
       }
     };
   }, [progress, isLoggedIn]);
-  
   
   useEffect(() => {
     if (typeof window === "undefined") return;
