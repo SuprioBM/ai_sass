@@ -28,9 +28,18 @@ export async function POST(req: Request) {
       },
     });
 
+    const secret = process.env.EMAIL_VERIFICATION_SECRET;
+    if (!secret) {
+      console.error("EMAIL_VERIFICATION_SECRET is not defined");
+      return NextResponse.json(
+        { error: "Server config error" },
+        { status: 500 }
+      );
+    }
+
     const token = jwt.sign(
       { email: user.email },
-      process.env.EMAIL_VERIFICATION_SECRET!,
+      secret,
       { expiresIn: "1h" }
     );
 
