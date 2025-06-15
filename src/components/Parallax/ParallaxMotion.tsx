@@ -18,14 +18,22 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   const progress = useMotionValue(0);
   const scrollAccumulator = useRef(0);
   const [isFullyOpen, setIsFullyOpen] = useState(false);
-
   const scrollRef = useRef<HTMLDivElement>(null);
+  const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Motion transforms for the two triangles
   const leftX = useTransform(progress, [0, 1], ["0vw", "-50vw"]);
   const leftY = useTransform(progress, [0, 1], ["0vh", "-50vh"]);
   const rightX = useTransform(progress, [0, 1], ["0vw", "50vw"]);
   const rightY = useTransform(progress, [0, 1], ["0vh", "50vh"]);
+
+  const updateProgress = (delta: number) => {
+    scrollAccumulator.current = Math.min(
+      1,
+      Math.max(0, scrollAccumulator.current + delta * 0.01)
+    );
+    progress.set(scrollAccumulator.current);
+    setIsFullyOpen(scrollAccumulator.current === 1);
+  };
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -37,70 +45,47 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       startY = e.touches[0].clientY;
     };
 
-    let ticking = false;
-
-    const updateProgress = (deltaY: number) => {
-      scrollAccumulator.current = Math.min(
-        1,
-        Math.max(0, scrollAccumulator.current + deltaY * 0.01)
-      );
-      progress.set(scrollAccumulator.current);
-      setIsFullyOpen(scrollAccumulator.current === 1);
-    };
-
     const onTouchMove = (e: TouchEvent) => {
-      const deltaY = startY - e.touches[0].clientY;
+      const currentY = e.touches[0].clientY;
+      const deltaY = startY - currentY;
+      const clampedDelta = Math.max(-30, Math.min(30, deltaY));
+
       const scrollEl = scrollRef.current;
-      const isScrollingDown = deltaY > 0;
+      const atTop = scrollEl?.scrollTop! <= 2;
       const isScrollingUp = deltaY < 0;
-      const atTop = scrollEl?.scrollTop === 0;
 
       if (
-        (scrollAccumulator.current < 1 && isScrollingDown) ||
+        scrollAccumulator.current < 1 ||
         (scrollAccumulator.current === 1 && isScrollingUp && atTop)
       ) {
-        e.preventDefault();
-
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            updateProgress(deltaY);
-            ticking = false;
-          });
-          ticking = true;
-        }
+        if (e.cancelable) e.preventDefault();
+        updateProgress(clampedDelta);
       }
 
-      startY = e.touches[0].clientY;
+      startY = currentY;
     };
-    
 
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
       if (!scrollEl) return;
 
-      const scrollingUp = e.deltaY < 0;
-      const atTop = scrollEl.scrollTop <= 0;
+      const delta = e.deltaY;
+      const clampedDelta = Math.max(-30, Math.min(30, delta));
+      const scrollingUp = delta < 0;
+      const atTop = scrollEl.scrollTop <= 2;
 
-      if (scrollAccumulator.current < 1) {
+      if (
+        scrollAccumulator.current < 1 ||
+        (scrollAccumulator.current === 1 && scrollingUp && atTop)
+      ) {
         e.preventDefault();
-        scrollAccumulator.current = Math.min(
-          1,
-          Math.max(0, scrollAccumulator.current + e.deltaY * 0.002)
-        );
-        progress.set(scrollAccumulator.current);
-        setIsFullyOpen(scrollAccumulator.current === 1);
-        return;
-      }
 
-      if (scrollAccumulator.current === 1 && scrollingUp && atTop) {
-        e.preventDefault();
-        scrollAccumulator.current = Math.max(
-          0,
-          scrollAccumulator.current - Math.abs(e.deltaY) * 0.002
-        );
-        progress.set(scrollAccumulator.current);
-        setIsFullyOpen(false);
-        return;
+        if (!throttleTimeout.current) {
+          updateProgress(clampedDelta);
+          throttleTimeout.current = setTimeout(() => {
+            throttleTimeout.current = null;
+          }, 16);
+        }
       }
     };
 
@@ -119,43 +104,48 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         window.removeEventListener("wheel", onWheel);
       }
     };
-  }, [progress, isLoggedIn]);
-  
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
-
-    if (isMobile) {
-      // On mobile, always allow scrolling
-      document.body.style.overflow = "auto";
-    } else {
-      // On desktop, toggle based on isFullyOpen
-      document.body.style.overflow = isFullyOpen ? "auto" : "hidden";
-    }
+    document.body.style.overflow = isMobile || isFullyOpen ? "auto" : "hidden";
 
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isFullyOpen]);
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      scrollAccumulator.current = 0;
+      progress.set(0);
+    });
+  }, []);
+
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white" style={{transform: "translateZ(0)"}}>
-      {/* Scrollable section (revealed after parallax opens) */}
+    <div
+      className="relative w-screen h-screen overflow-hidden bg-white"
+      style={{ transform: "translateZ(0)" }}
+    >
+      <div style={{ height: "1px", pointerEvents: "none" }} />
+
+      {/* Scrollable content after parallax */}
       <div
         id="scroll-section"
         ref={scrollRef}
         className="absolute inset-0 z-0 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ height: "100vh" }} // ensure full viewport height for scroll
+        style={{ height: "100vh" }}
       >
         {React.cloneElement(children[1], {
-          scrollRef: scrollRef, // pass the whole ref object
+          scrollRef,
         })}
       </div>
 
-      {/* Top-left triangle */}
+      {/* Left triangle */}
       <motion.div
-        initial={false}
+        initial={{ x: 0, y: 0 }}
         className="absolute top-0 bottom-0 left-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
@@ -169,9 +159,9 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         <div className="flex items-center justify-center">{children[0]}</div>
       </motion.div>
 
-      {/* Bottom-right triangle */}
+      {/* Right triangle */}
       <motion.div
-        initial={false}
+        initial={{ x: 0, y: 0 }}
         className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
