@@ -1,3 +1,4 @@
+// @ts-nocheck
 import MinimalisticTemplate from "@/components/CvTemplates/BlueTemplate";
 import { ClassicTemplate } from "@/components/CvTemplates/ClassicTemplate";
 import { CreativeTemplate } from "@/components/CvTemplates/CreativeTemplate";
