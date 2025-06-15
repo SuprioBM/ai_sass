@@ -140,7 +140,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   }, [isFullyOpen]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-white">
+    <div className="relative w-screen h-screen overflow-hidden bg-white" style={{transform: "translateZ(0)"}}>
       {/* Scrollable section (revealed after parallax opens) */}
       <div
         id="scroll-section"
@@ -155,6 +155,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       {/* Top-left triangle */}
       <motion.div
+        initial={false}
         className="absolute top-0 bottom-0 left-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
@@ -170,6 +171,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       {/* Bottom-right triangle */}
       <motion.div
+        initial={false}
         className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
