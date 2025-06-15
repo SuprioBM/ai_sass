@@ -37,6 +37,17 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       startY = e.touches[0].clientY;
     };
 
+    let ticking = false;
+
+    const updateProgress = (deltaY: number) => {
+      scrollAccumulator.current = Math.min(
+        1,
+        Math.max(0, scrollAccumulator.current + deltaY * 0.01)
+      );
+      progress.set(scrollAccumulator.current);
+      setIsFullyOpen(scrollAccumulator.current === 1);
+    };
+
     const onTouchMove = (e: TouchEvent) => {
       const deltaY = startY - e.touches[0].clientY;
       const scrollEl = scrollRef.current;
@@ -44,28 +55,22 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       const isScrollingUp = deltaY < 0;
       const atTop = scrollEl?.scrollTop === 0;
 
-      if (scrollAccumulator.current < 1 && isScrollingDown) {
+      if (
+        (scrollAccumulator.current < 1 && isScrollingDown) ||
+        (scrollAccumulator.current === 1 && isScrollingUp && atTop)
+      ) {
         e.preventDefault();
-        scrollAccumulator.current = Math.min(
-          1,
-          Math.max(0, scrollAccumulator.current + deltaY * 0.01)
-        );
-        progress.set(scrollAccumulator.current);
-        setIsFullyOpen(scrollAccumulator.current === 1);
+
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateProgress(deltaY);
+            ticking = false;
+          });
+          ticking = true;
+        }
       }
 
-      if (scrollAccumulator.current === 1 && isScrollingUp && atTop) {
-        // Only reverse when at top and swiping down
-        e.preventDefault();
-        scrollAccumulator.current = Math.max(
-          0,
-          scrollAccumulator.current + deltaY * 0.01
-        );
-        progress.set(scrollAccumulator.current);
-        setIsFullyOpen(false);
-      }
-
-      startY = e.touches[0].clientY; // update for next move
+      startY = e.touches[0].clientY;
     };
     
 
@@ -155,7 +160,8 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
           x: leftX,
           y: leftY,
-          display: isFullyOpen ? "none" : "block",
+          willChange: "transform",
+          opacity: isFullyOpen ? 0 : 1,
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
@@ -169,7 +175,8 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
           x: rightX,
           y: rightY,
-          display: isFullyOpen ? "none" : "block",
+          willChange: "transform",
+          opacity: isFullyOpen ? 0 : 1,
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
