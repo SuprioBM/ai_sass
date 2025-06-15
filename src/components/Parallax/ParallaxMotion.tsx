@@ -30,9 +30,39 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    // Detect if on mobile (pointer: coarse usually means touch device)
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
-    if (isMobile) return; // Skip wheel logic on mobile
+    let startY = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const deltaY = startY - e.touches[0].clientY;
+
+      if (scrollAccumulator.current < 1) {
+        e.preventDefault();
+        scrollAccumulator.current = Math.min(
+          1,
+          Math.max(0, scrollAccumulator.current + deltaY * 0.01)
+        );
+        progress.set(scrollAccumulator.current);
+        setIsFullyOpen(scrollAccumulator.current === 1);
+      }
+
+      if (scrollAccumulator.current === 1 && deltaY < 0) {
+        // Swiping down to close
+        e.preventDefault();
+        scrollAccumulator.current = Math.max(
+          0,
+          scrollAccumulator.current + deltaY * 0.01
+        );
+        progress.set(scrollAccumulator.current);
+        setIsFullyOpen(false);
+      }
+
+      startY = e.touches[0].clientY; // update for next move
+    };
 
     const onWheel = (e: WheelEvent) => {
       const scrollEl = scrollRef.current;
@@ -62,13 +92,25 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         setIsFullyOpen(false);
         return;
       }
-      // Else: allow normal scrolling
     };
 
-    window.addEventListener("wheel", onWheel, { passive: false });
-    return () => window.removeEventListener("wheel", onWheel);
-  }, [progress, isLoggedIn]);
+    if (isMobile) {
+      window.addEventListener("touchstart", onTouchStart, { passive: false });
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
+    } else {
+      window.addEventListener("wheel", onWheel, { passive: false });
+    }
 
+    return () => {
+      if (isMobile) {
+        window.removeEventListener("touchstart", onTouchStart);
+        window.removeEventListener("touchmove", onTouchMove);
+      } else {
+        window.removeEventListener("wheel", onWheel);
+      }
+    };
+  }, [progress, isLoggedIn]);
+  
   useEffect(() => {
     if (typeof window === "undefined") return;
 
