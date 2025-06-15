@@ -1,8 +1,7 @@
-// @ts-nocheck
-import nodemailer from "nodemailer";
-
 export async function sendVerificationEmail(email: string, token: string) {
   try {
+    const nodemailer = await import("nodemailer"); // ✅ dynamic import
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -23,6 +22,6 @@ export async function sendVerificationEmail(email: string, token: string) {
     console.log("Verification email sent:", info.messageId);
   } catch (error) {
     console.error("Failed to send verification email:", error);
-    throw error; // rethrow if you want the caller to handle this
+    throw error;
   }
 }
