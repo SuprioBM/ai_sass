@@ -12,16 +12,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth dark">
-      <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-      <body>
+   <>
         <div className="fixed inset-0 z-[-10] bg-gradient-to-br from-black via-stone-600 to-black" />
         <div className="fixed inset-0 z-[-9] bg-[url('/Ai2.webp')] bg-fit lg:bg-cover lg:bg-no-repeat opacity-30 pointer-events-none" />
         <NavbarDemo />
 
         {children}
         <FuturisticFooter />
-      </body>
-    </html>
+   </>
   );
 }

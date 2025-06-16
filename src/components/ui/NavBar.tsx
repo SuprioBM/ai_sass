@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 
 import React, { useRef, useState } from "react";
+import Link from "next/link";
 
 interface NavbarProps {
   scrollRef?: React.RefObject<HTMLDivElement>;
@@ -248,7 +249,7 @@ export const NavbarLogo = () => {
 
 export const NavbarButton = ({
   href,
-  as: Tag = "a",
+  as: Tag = Link,
   children,
   className,
   variant = "primary",
