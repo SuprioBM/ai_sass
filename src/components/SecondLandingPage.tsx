@@ -20,7 +20,6 @@ export default function SecondLandingPage({
   scrollRef,
 }: SecondLandingPageProps) {
   const [ready, setReady] = useState(false);
-  const router = useRouter();
   
   useEffect(() => {
     if (window.location.hash) {
