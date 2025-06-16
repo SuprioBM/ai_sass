@@ -19,9 +19,9 @@ type NavbarDemoProps = {
 
 export const NavbarDemo = ({ scrollRef }: NavbarDemoProps) => {
   const navItems = [
-    { name: "Features", link: "#features" },
-    { name: "How it works", link: "#how-it-works" },
-    { name: "FAQs", link: "#faqs" },
+    { name: "Features", link: "/#features" },
+    { name: "How it works", link: "/#how-it-works" },
+    { name: "FAQs", link: "/#faqs" },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,7 +35,7 @@ export const NavbarDemo = ({ scrollRef }: NavbarDemoProps) => {
 
           <NavItems items={navItems} />
 
-          <NavbarButton variant="primary" className="hidden sm:flex">
+          <NavbarButton variant="primary" className="hidden sm:flex" href="/cv/template">
             Launch Builder
           </NavbarButton>
         </NavBody>

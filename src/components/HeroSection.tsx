@@ -3,11 +3,15 @@
 import { motion } from "motion/react";
 import { useSession } from "next-auth/react";
 import { ParallaxBackground } from "./Parallax/ParallaxBackground";
+import Link from "next/link";
 
-export function HeroSectionOne() {
-     const { data: session } = useSession();
-     const user = session?.user;
-
+export function HeroSectionOne({
+  scrollRef,
+}: {
+  scrollRef?: React.RefObject<HTMLDivElement>;
+}) {
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center mt-20">
@@ -59,12 +63,18 @@ export function HeroSectionOne() {
           transition={{ duration: 0.3, delay: 1 }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+          <Link
+            href="/cv/ai_cv"
+            className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-center"
+          >
             Build My Resume
-          </button>
-          <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+          </Link>
+          <Link
+            href="/support"
+            className="text-center w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
+          >
             Contact Support
-          </button>
+          </Link>
         </motion.div>
 
         <motion.div
@@ -74,18 +84,19 @@ export function HeroSectionOne() {
           className="relative z-10 mt-20 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
         >
           <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
-           <ParallaxBackground
-                         className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[500px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/Ai2.webp')] bg-cover bg-center border border-white/30 mb-20"
-                         backgroundSpeed={0.2}
-                       >
-                         <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-lg">
-                           AI-Powered CV & Resume Builder
-                         </h1>
-                         <p className="mt-4 max-w-2xl text-center text-gray-300 text-sm sm:text-lg">
-                           Create tailored, standout resumes in minutes — optimized by AI
-                           for your dream job.
-                         </p>
-                       </ParallaxBackground>
+            <ParallaxBackground
+             scrollRef={scrollRef}
+              className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[500px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/Ai2.webp')] bg-cover bg-center border border-white/30 mb-20"
+              backgroundSpeed={0.2}
+            >
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-center bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-lg">
+                AI-Powered CV & Resume Builder
+              </h1>
+              <p className="mt-4 max-w-2xl text-center text-gray-300 text-sm sm:text-lg">
+                Create tailored, standout resumes in minutes — optimized by AI
+                for your dream job.
+              </p>
+            </ParallaxBackground>
           </div>
         </motion.div>
       </div>

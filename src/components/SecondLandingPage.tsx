@@ -9,6 +9,8 @@ import { NavbarDemo } from "./ResizeableNavbar";
 import { ParallaxSkew } from "./Parallax/ParallaxSkew";
 import { StickyScrollRevealDemo } from "./StickyReveal";
 import FuturisticFooter from "./footer";
+import { useRouter } from "next/navigation";
+
 
 type SecondLandingPageProps = {
   scrollRef?: RefObject<HTMLDivElement>;
@@ -18,6 +20,17 @@ export default function SecondLandingPage({
   scrollRef,
 }: SecondLandingPageProps) {
   const [ready, setReady] = useState(false);
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.substring(1);
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [typeof window !== "undefined" ? window.location.hash : ""]);
 
   useEffect(() => {
     if (scrollRef?.current) {
@@ -40,15 +53,15 @@ export default function SecondLandingPage({
       {ready && (
         <>
           <NavbarDemo scrollRef={scrollRef} />
-          <HeroSectionOne />
+          <HeroSectionOne scrollRef={scrollRef} />
 
           <div className="flex flex-col gap-12 py-16 mx-auto">
             <ParallaxBackground
               scrollRef={scrollRef}
               className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[450px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/prompt1.png')] bg-cover bg-center border border-white/30 mb-20"
-              backgroundSpeed={0.2}
+              backgroundSpeed={0.02}
             >
-              <div></div>
+              <h1>Prompt of the day</h1>
             </ParallaxBackground>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 px-4 sm:px-10 max-w-5xl mx-auto">
@@ -93,7 +106,6 @@ export default function SecondLandingPage({
                 scrollRef={scrollRef}
                 className="relative h-64 bg-[url('/ai4.jpeg')] bg-cover bg-center rounded-xl shadow-xl backdrop-blur-md bg-opacity-40 flex flex-col items-center justify-center p-8 border border-white/20"
               >
-              
                 <h2 className=" mt-20 text-2xl sm:text-3xl font-semibold text-white mb-2">
                   Real-Time Feedback
                 </h2>
@@ -108,7 +120,6 @@ export default function SecondLandingPage({
                 scrollRef={scrollRef}
                 className="relative h-64 bg-[url('/ai5.jpg')] bg-cover bg-center rounded-xl shadow-xl backdrop-blur-md bg-opacity-40 flex flex-col items-center justify-center p-8 border border-white/20"
               >
-              
                 <h2 className="mt-20 text-2xl sm:text-3xl font-semibold text-white mb-2">
                   One-Click Export
                 </h2>
@@ -120,6 +131,7 @@ export default function SecondLandingPage({
             </div>
 
             <ParallaxFade
+              id="how-it-works"
               scrollRef={scrollRef}
               className="text-center relative rounded-xl shadow-2xl backdrop-blur-md bg-opacity-30 p-10 border border-white/20 -mt-40 mb-30"
             >
@@ -147,7 +159,10 @@ export default function SecondLandingPage({
               </p>
             </ParallaxZoom>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 my-20 max-w-6xl px-4 mx-auto">
+            <div
+              className="grid grid-cols-1 md:grid-cols-3 gap-10 my-20 max-w-6xl px-4 mx-auto"
+              id="features"
+            >
               {[
                 {
                   title: "AI-Powered Job Matching",

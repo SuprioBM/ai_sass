@@ -8,6 +8,7 @@ interface ParallaxFadeProps {
   children: React.ReactNode;
   scrollRef?: React.RefObject<HTMLDivElement>;
   className?: string;
+  id?: string;
   fromOpacity?: number;
   toOpacity?: number;
   start?: string;
@@ -24,6 +25,7 @@ export const ParallaxFade: React.FC<ParallaxFadeProps> = ({
   toOpacity = 0,
   start = "top center",
   end = "bottom top",
+  id,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -58,7 +60,7 @@ export const ParallaxFade: React.FC<ParallaxFadeProps> = ({
   }, [fromOpacity, toOpacity, scrollRef, start, end]);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} id={id}>
       {children}
     </div>
   );

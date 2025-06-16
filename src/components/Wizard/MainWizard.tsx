@@ -585,9 +585,9 @@ export default function MainWizard() {
 
   return (
         <FormProvider {...methods}>
-    <div className="max-w-4xl mx-auto my-10">
+    <div className="max-w-4xl mx-auto  mt-30">
       <Card className="p-6 space-y-6 bg-transparent">
-        <h1 className="text-3xl font-bold tracking-tight text-center">
+        <h1 className="text-5xl font-bold tracking-tight text-center">
           CV Builder Wizard
         </h1>
         <div className="text-center text-sm text-muted-foreground">

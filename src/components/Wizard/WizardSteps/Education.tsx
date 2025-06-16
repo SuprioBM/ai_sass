@@ -42,7 +42,7 @@ export default function EducationForm({
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="border p-4 rounded-lg space-y-4 bg-gray-50"
+          className="border p-4 rounded-lg space-y-4"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
