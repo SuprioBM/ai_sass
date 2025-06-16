@@ -6,7 +6,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY || "", // Make sure this is set in your .env
   baseURL: "https://openrouter.ai/api/v1",
   defaultHeaders: {
-    "HTTP-Referer": "https://yourdomain.com", // Replace with your domain if required by OpenRouter
+    "HTTP-Referer": "https://cvwizardai.vercel.app", // Replace with your domain if required by OpenRouter
     "X-Title": "AI Job Prep Assistant",
   },
 });
