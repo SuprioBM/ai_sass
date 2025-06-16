@@ -35,7 +35,11 @@ export const NavbarDemo = ({ scrollRef }: NavbarDemoProps) => {
 
           <NavItems items={navItems} />
 
-          <NavbarButton variant="primary" className="hidden sm:flex" href="/cv/template">
+          <NavbarButton
+            variant="primary"
+            className="hidden sm:flex"
+            href="/cv/template"
+          >
             Launch Builder
           </NavbarButton>
         </NavBody>
@@ -69,6 +73,7 @@ export const NavbarDemo = ({ scrollRef }: NavbarDemoProps) => {
               onClick={() => setIsMobileMenuOpen(false)}
               variant="primary"
               className="w-full mt-4"
+              href="/cv/template"
             >
               Launch Builder
             </NavbarButton>
