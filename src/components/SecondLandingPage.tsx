@@ -9,7 +9,6 @@ import { NavbarDemo } from "./ResizeableNavbar";
 import { ParallaxSkew } from "./Parallax/ParallaxSkew";
 import { StickyScrollRevealDemo } from "./StickyReveal";
 import FuturisticFooter from "./footer";
-import { useRouter } from "next/navigation";
 
 
 type SecondLandingPageProps = {
