@@ -19,6 +19,8 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   const scrollAccumulator = useRef(0);
   const [isFullyOpen, setIsFullyOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const leftOpacity = useTransform(progress, [0.95, 1], [1, 0]);
+  const rightOpacity = useTransform(progress, [0.95, 1], [1, 0]);
 
 useEffect(() => {
   const timeout = setTimeout(() => setHasMounted(true), 50); // Let layout settle
@@ -211,7 +213,7 @@ useEffect(() => {
           x: leftX,
           y: leftY,
           willChange: "transform",
-          opacity: useTransform(progress, [0.95, 1], [1, 0]),
+          opacity: leftOpacity,
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
@@ -227,7 +229,7 @@ useEffect(() => {
           x: rightX,
           y: rightY,
           willChange: "transform",
-          opacity: useTransform(progress, [0.95, 1], [1, 0]),
+          opacity: rightOpacity,
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
