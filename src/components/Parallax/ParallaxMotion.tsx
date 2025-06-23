@@ -70,7 +70,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       if (
         (scrollAccumulator.current < 1 && isScrollingDown) ||
-        (scrollAccumulator.current >= 0.99 && isScrollingUp && atTop)
+        (scrollAccumulator.current > 0 && isScrollingUp && atTop)
       ) {
         e.preventDefault();
 
@@ -183,7 +183,11 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         id="scroll-section"
         ref={scrollRef}
         className="absolute inset-0 z-0 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ height: "100vh" }}
+        style={{
+  height: "100vh",
+  pointerEvents: isFullyOpen ? "auto" : "none",
+  touchAction: isFullyOpen ? "auto" : "none",
+}}
       >
         {React.cloneElement(children[1], {
           scrollRef: scrollRef,
@@ -199,7 +203,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           x: leftX,
           y: leftY,
           willChange: "transform",
-          opacity: isFullyOpen ? 0 : 1,
+          opacity: useTransform(progress, [0.95, 1], [1, 0]),
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
@@ -215,7 +219,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           x: rightX,
           y: rightY,
           willChange: "transform",
-          opacity: isFullyOpen ? 0 : 1,
+          opacity: useTransform(progress, [0.95, 1], [1, 0]),
           pointerEvents: isFullyOpen ? "none" : "auto",
         }}
       >
