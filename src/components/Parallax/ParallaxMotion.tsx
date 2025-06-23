@@ -202,6 +202,7 @@ useEffect(() => {
 
       {/* Left Triangle */}
       {hasMounted && (
+      <>
       <motion.div
         initial= {false}
         className="fixed top-0 bottom-0 left-0 w-screen h-screen z-10"
@@ -234,6 +235,7 @@ useEffect(() => {
           {children[0]}
         </div>
       </motion.div>
+      </>
       )}
     </div>
   );
