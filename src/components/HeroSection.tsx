@@ -83,7 +83,7 @@ export function HeroSectionOne({
           transition={{ duration: 0.3, delay: 1.2 }}
           className="relative z-10 mt-20 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
         >
-          <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+          <div className="w-full overflow-y-auto rounded-xl border border-gray-300 dark:border-gray-700">
             <ParallaxBackground
              scrollRef={scrollRef}
               className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[500px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/Ai2.webp')] bg-cover bg-center border border-white/30 mb-20"
