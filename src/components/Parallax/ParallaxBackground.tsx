@@ -26,37 +26,38 @@ export const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = ref.current;
-    const scroller = scrollRef?.current;
-    if (!el || !scroller) return;
+  const el = ref.current;
+  const scroller = scrollRef?.current;
+  if (!el || !scroller) return;
 
-    const ctx = gsap.context(() => {
-      const anim = gsap.to(el, {
-        backgroundPositionY: `${backgroundSpeed * 100}%`,
-        ease: "none",
-        scrollTrigger: {
-          trigger: el,
-          scroller,
-          start,
-          end,
-          scrub: true,
-        },
-      });
+  const ctx = gsap.context(() => {
+    const anim = gsap.to(el, {
+      backgroundPositionY: `${backgroundSpeed * 100}%`,
+      ease: "none",
+      scrollTrigger: {
+        trigger: el,
+        scroller,
+        start,
+        end,
+        scrub: true,
+      },
+    });
 
-      return () => anim.scrollTrigger?.kill();
-    }, ref);
+    return () => anim.scrollTrigger?.kill();
+  }, ref);
 
-    ScrollTrigger.refresh();
+  setTimeout(() => ScrollTrigger.refresh(), 0); // ✅ Delayed refresh
 
-    return () => ctx.revert();
-  }, [backgroundSpeed, scrollRef, start, end]);
+  return () => ctx.revert();
+}, [backgroundSpeed, scrollRef, start, end]);
+
 
   return (
     <div
       ref={ref}
       className={className}
       style={{
-        backgroundAttachment: "fixed",
+       // backgroundAttachment: "fixed",//
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
       }}
