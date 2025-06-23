@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 
 interface ParallaxWrapperProps {
   children: [
@@ -18,6 +18,12 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   const progress = useMotionValue(0);
   const scrollAccumulator = useRef(0);
   const [isFullyOpen, setIsFullyOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+useEffect(() => {
+  const timeout = setTimeout(() => setHasMounted(true), 50); // Let layout settle
+  return () => clearTimeout(timeout);
+}, []);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +44,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
         1,
         Math.max(0, scrollAccumulator.current + deltaY * 0.01)
       );
-      progress.set(scrollAccumulator.current);
+      animate(progress, scrollAccumulator.current, { duration: 0.25, ease: "easeOut" });
       const fullyOpen = scrollAccumulator.current >= 0.99;
       setIsFullyOpen(fullyOpen);
 
@@ -107,7 +113,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           1,
           Math.max(0, scrollAccumulator.current + e.deltaY * 0.005)
         );
-        progress.set(scrollAccumulator.current);
+        animate(progress, scrollAccumulator.current, { duration: 0.25, ease: "easeOut" });
         setIsFullyOpen(scrollAccumulator.current >= 0.99);
 
         console.log("🌀 Wheel incremented", {
@@ -122,7 +128,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           0,
           scrollAccumulator.current - Math.abs(e.deltaY) * 0.005
         );
-        progress.set(scrollAccumulator.current);
+        animate(progress, scrollAccumulator.current, { duration: 0.25, ease: "easeOut" });
         setIsFullyOpen(false);
 
         console.log("🌀 Wheel decremented", {
@@ -195,8 +201,9 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       </div>
 
       {/* Left Triangle */}
+      {hasMounted && (
       <motion.div
-        initial={{ x: 0, y: 0 }}
+        initial= {false}
         className="fixed top-0 bottom-0 left-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(0 0, 100% 0, 0 100%)",
@@ -212,7 +219,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
       {/* Right Triangle */}
       <motion.div
-        initial={{ x: 0, y: 0 }}
+        initial= {false}
         className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
         style={{
           clipPath: "polygon(100% 0, 100% 100%, 0 100%)",
@@ -227,6 +234,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
           {children[0]}
         </div>
       </motion.div>
+      )}
     </div>
   );
 };
