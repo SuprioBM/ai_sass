@@ -215,6 +215,8 @@ useEffect(() => {
           willChange: "transform",
           opacity: leftOpacity,
           pointerEvents: isFullyOpen ? "none" : "auto",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
         }}
       >
         <div className="flex items-center justify-center">{children[0]}</div>
@@ -231,6 +233,8 @@ useEffect(() => {
           willChange: "transform",
           opacity: rightOpacity,
           pointerEvents: isFullyOpen ? "none" : "auto",
+          backfaceVisibility: "hidden",
+          WebkitBackfaceVisibility: "hidden",
         }}
       >
         <div className="overflow-hidden w-full h-full flex items-center justify-center">
