@@ -169,7 +169,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
       {hasMounted && contentReady &&(
         <>
           <motion.div
-            initial={{opacity: 0}}
+            initial={{opacity: 1}}
             animate={{opacity: 1}}
             className="fixed top-0 bottom-0 left-0 w-screen h-screen z-10"
             style={{
@@ -188,7 +188,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
 
           {/* Right Triangle */}
           <motion.div
-            initial={{opacity: 0}}
+            initial={{opacity: 1}}
             animate={{opacity: 1}}
             className="fixed top-0 bottom-0 right-0 w-screen h-screen z-10"
             style={{
