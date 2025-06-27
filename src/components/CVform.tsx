@@ -4,7 +4,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { CvFormData } from "@/types/Cv";
 
-
 type CvFormProps = {
   onSubmit: (data: CvFormData) => void;
   formData: CvFormData;
@@ -16,9 +15,10 @@ export default function CvForm({
   formData,
   setFormData,
 }: CvFormProps) {
-  const { register, handleSubmit, control, watch,setValue,reset } = useForm<CvFormData>({
-    defaultValues: formData,
-  });
+  const { register, handleSubmit, control, watch, setValue, reset } =
+    useForm<CvFormData>({
+      defaultValues: formData,
+    });
 
   const { fields: experienceFields, append: addExperience } = useFieldArray({
     control,
@@ -35,25 +35,29 @@ export default function CvForm({
     name: "projects",
   });
 
-  const { fields: certificatesFields, append: addCertificates } =
-    useFieldArray({ control, name: "certificates" });
+  const { fields: certificatesFields, append: addCertificates } = useFieldArray(
+    {
+      control,
+      name: "certificates",
+    }
+  );
 
-  // skills and languages are simple string arrays; we will handle them manually
   const skills = watch("skills") || [];
   const languages = watch("languages") || [];
-   const prevDataRef = useRef<CvFormData | null>(null);
-  // For skills, languages, we’ll render inputs for each item and allow adding blank ones
-   
-   
-   useEffect(() => {
-     const hasChanged =
-       JSON.stringify(prevDataRef.current) !== JSON.stringify(formData);
-     if (formData && hasChanged) {
-       reset(formData); // Update form state
-       prevDataRef.current = formData; // Save current data to compare next time
-     }
-   }, [formData, reset]);
-   
+
+  const prevDataRef = useRef<CvFormData | null>(null);
+  const isFirstLoadRef = useRef(true);
+
+
+  useEffect(() => {
+    if (isFirstLoadRef.current) {
+      reset(formData); // ✅ only reset on initial load
+      prevDataRef.current = formData;
+      isFirstLoadRef.current = false;
+    }
+  }, [formData, reset]);
+  
+
   useEffect(() => {
     const subscription = watch((value) => {
       setFormData(value as CvFormData);
@@ -63,7 +67,6 @@ export default function CvForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-4">
-      {/* Basic info */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <input
           {...register("name")}
@@ -100,33 +103,32 @@ export default function CvForm({
         className="input w-full h-24"
       />
 
-      {/* Experience */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Experience</h2>
         {experienceFields.map((field, index) => (
           <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
-              {...register(`experience.${index}.role`)}
+              {...register(`experience.${index}.role` as const)}
               placeholder="Role"
               className="input"
             />
             <input
-              {...register(`experience.${index}.company`)}
+              {...register(`experience.${index}.company`  as const)}
               placeholder="Company"
               className="input"
             />
             <input
-              {...register(`experience.${index}.startDate`)}
+              {...register(`experience.${index}.startDate`  as const)}
               placeholder="Start Date"
               className="input"
             />
             <input
-              {...register(`experience.${index}.endDate`)}
+              {...register(`experience.${index}.endDate`  as const)}
               placeholder="End Date"
               className="input"
             />
             <textarea
-              {...register(`experience.${index}.description`)}
+              {...register(`experience.${index}.description` as const)}
               placeholder="Description"
               className="input h-20 sm:col-span-2"
             />
@@ -147,30 +149,29 @@ export default function CvForm({
         >
           + Add Experience
         </button>
-      </div>
+      </section>
 
-      {/* Education */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Education</h2>
         {educationFields.map((field, index) => (
           <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
-              {...register(`education.${index}.degree`)}
+              {...register(`education.${index}.degree`  as const)}
               placeholder="Degree"
               className="input"
             />
             <input
-              {...register(`education.${index}.school`)}
+              {...register(`education.${index}.school`  as const)}
               placeholder="School"
               className="input"
             />
             <input
-              {...register(`education.${index}.startDate`)}
+              {...register(`education.${index}.startDate` as const)}
               placeholder="Start Date"
               className="input"
             />
             <input
-              {...register(`education.${index}.endDate`)}
+              {...register(`education.${index}.endDate` as const)}
               placeholder="End Date"
               className="input"
             />
@@ -185,66 +186,57 @@ export default function CvForm({
         >
           + Add Education
         </button>
-      </div>
+      </section>
 
-      {/* Skills (string array) */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Skills</h2>
         {skills.map((skill, index) => (
           <input
             key={index}
-            {...register(`skills.${index}` as const)}
+            {...register(`skills.${index}`)}
             placeholder={`Skill #${index + 1}`}
             className="input"
           />
         ))}
         <button
           type="button"
-          onClick={() => {
-            const currentSkills = watch("skills") || [];
-            setValue("skills", [...currentSkills, ""]);
-          }}
+          onClick={() => setValue("skills", [...skills, ""])}
           className="btn mt-2"
         >
           + Add Skill
         </button>
-      </div>
+      </section>
 
-      {/* Languages (string array) */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Languages</h2>
         {languages.map((language, index) => (
           <input
             key={index}
-            {...register(`languages.${index}` as const)}
+            {...register(`languages.${index}`)}
             placeholder={`Language #${index + 1}`}
             className="input"
           />
         ))}
         <button
           type="button"
-          onClick={() => {
-            const currentLanguages = watch("languages") || [];
-            setValue("languages", [...currentLanguages, ""]);
-          }}
+          onClick={() => setValue("languages", [...languages, ""])}
           className="btn mt-2"
         >
           + Add Language
         </button>
-      </div>
+      </section>
 
-      {/* Projects */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Projects</h2>
         {projectFields.map((field, index) => (
           <div key={field.id} className="space-y-2">
             <input
-              {...register(`projects.${index}.name`)}
+              {...register(`projects.${index}.name` as const)}
               placeholder="Project Name"
               className="input"
             />
             <textarea
-              {...register(`projects.${index}.description`)}
+              {...register(`projects.${index}.description`  as const)}
               placeholder="Project Description"
               className="input h-20"
             />
@@ -257,20 +249,19 @@ export default function CvForm({
         >
           + Add Project
         </button>
-      </div>
+      </section>
 
-      {/* Certifications */}
-      <div>
+      <section>
         <h2 className="text-xl font-semibold">Certificates</h2>
         {certificatesFields.map((field, index) => (
           <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
-              {...register(`certificates.${index}.name`)}
-              placeholder="Certificates Name"
+              {...register(`certificates.${index}.name` as const)}
+              placeholder="Certificate Name"
               className="input"
             />
             <input
-              {...register(`certificates.${index}.issuer`)}
+              {...register(`certificates.${index}.issuer`   as const)}
               placeholder="Issuer"
               className="input"
             />
@@ -283,7 +274,7 @@ export default function CvForm({
         >
           + Add Certification
         </button>
-      </div>
+      </section>
 
       <button type="submit" className="btn-primary mt-6">
         Generate CV

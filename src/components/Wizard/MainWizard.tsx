@@ -532,6 +532,28 @@ export default function MainWizard() {
                 )}
                 <div className="flex gap-4 mt-4">
                   <Button
+                    variant="outline"
+                    onClick={() => {
+                      const values = getValues();
+
+                      const location = encodeURIComponent(values.location);
+                      const skills = encodeURIComponent(
+                        values.skills.join(",")
+                      );
+                      const experience = encodeURIComponent(
+                        values.experience.length.toString()
+                      );
+                      const salary = ""; // Optional – you can add a form field later
+
+                      router.push(
+                        `/jobs?location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
+                      );
+                    }}
+                  >
+                    Search Jobs Based on This CV
+                  </Button>
+
+                  <Button
                     onClick={() => {
                       if (pdfUrl) {
                         const link = document.createElement("a");
@@ -549,6 +571,7 @@ export default function MainWizard() {
                   <Button variant="outline" onClick={() => setStep(9)}>
                     Edit
                   </Button>
+
                   <Button
                     variant="outline"
                     onClick={() =>

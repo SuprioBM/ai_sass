@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { pdf } from "@react-pdf/renderer";
 import debounce from "lodash.debounce";
-
+import { useRouter } from "next/navigation";
 import CvForm from "@/components/CVform";
 import ModernTemplate from "@/components/CvTemplates/ModernTemplate";
 import StylishTemplate from "@/components/CvTemplates/StylishTemplate";
@@ -13,6 +13,7 @@ import {CreativeTemplate} from "@/components/CvTemplates/CreativeTemplate";
 import { CvFormData } from "@/types/Cv";
 import MinimalisticTemplate from "@/components/CvTemplates/BlueTemplate";
 import { useCvWizard } from "@/context/CvWizardContext"
+import { Button } from "./ui/button";
 
 const templates = {
   ModernTemplate,
@@ -51,6 +52,8 @@ export default function FillDataPage() {
     github: "",
     portfolio: ""
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     if (data.aiData) {
@@ -150,6 +153,26 @@ export default function FillDataPage() {
         >
           Download PDF
         </button>
+        <Button
+          variant="outline"
+          className="ml-4"
+          onClick={() => {
+            const location = encodeURIComponent(formData.location || "");
+            const skills = encodeURIComponent(
+              (formData.skills || []).join(",")
+            );
+            const experience = encodeURIComponent(
+              (formData.experience?.length || 0).toString()
+            );
+            const salary = ""; // You can collect this later if needed
+
+            router.push(
+              `/jobs?location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
+            );
+          }}
+        >
+          Search Jobs Based on This CV
+        </Button>
       </div>
 
       {/* Preview Section */}

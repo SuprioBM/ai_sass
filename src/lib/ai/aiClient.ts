@@ -33,7 +33,7 @@ export async function chatWithLLM({
   while (attempt <= retries) {
     try {
       const response = await openai.chat.completions.create({
-        model:"meta-llama/llama-3.3-8b-instruct:free",
+        model:"meta-llama/llama-3-8b-instruct",
         messages,
         temperature,
         max_tokens,
