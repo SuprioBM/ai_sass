@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     // 2. Fetch scraped jobs from external scraper (Playwright server)
     const scraperRes = await fetch(
-      "https://your-scraper-url.up.railway.app/scrape",
+      "https://playwright-20q3.onrender.com/scrape",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
