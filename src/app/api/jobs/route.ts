@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     let scrapedJobs = [];
     try {
       const scraperRes = await fetch(
-        "https://playwright-kyd4.onrender.com/scrape",
+        "https://playwright-041e.onrender.com/scrape",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
