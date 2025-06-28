@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchJobsFromJSearch } from "@/lib/jobs/fetchJobs";
+import { Job } from "@/types/Cv";
 
 export async function POST(req: Request) {
   try {
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Merge and deduplicate based on title + seller or URL
-    const jobsMap = new Map<string, any>();
+    const jobsMap = new Map<string, Job>();
 
     [...apiJobs, ...scrapedJobs].forEach((job) => {
       const key = ((job.url || ""))

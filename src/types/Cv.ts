@@ -42,3 +42,14 @@ export type CvFormData = {
   certificates: Certificate[];
   hobbies?: string[],
 };
+
+
+
+export type Job = {
+  title?: string;
+  company?: string;
+  location?: string;
+  description?: string;
+  url?: string;
+  [key: string]: any;
+}
