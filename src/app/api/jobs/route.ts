@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { fetchJobsFromJSearch } from "@/lib/jobs/fetchJobs";
-import { Job } from "@/types/Cv";
 
 export async function POST(req: Request) {
   try {
