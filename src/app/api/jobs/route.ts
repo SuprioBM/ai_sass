@@ -17,29 +17,8 @@ export async function POST(req: Request) {
       salary,
     });
 
-    // 3. Fetch scraped jobs from external Playwright server
-    let scrapedJobs = [];
-    try {
-      const scraperRes = await fetch(
-        "https://playwright-041e.onrender.com/scrape",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: jobQuery, skills }),
-        }
-      );
-
-      const scrapedData = await scraperRes.json();
-      scrapedJobs = scrapedData?.gigs || [];
-    } catch (scrapeErr) {
-      console.error("Scraper failed:", scrapeErr);
-    }
-
-    // 4. Merge and deduplicate based on title + seller or URL
-        const combinedJobs = [...apiJobs, ...scrapedJobs];
-
-    // 5. Return response
-    return NextResponse.json({ jobs: combinedJobs });
+    // 3. Return response
+    return NextResponse.json({ jobs: apiJobs });
   } catch (error) {
     console.error("Job API error:", error);
     return NextResponse.json(
