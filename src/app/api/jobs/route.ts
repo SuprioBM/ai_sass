@@ -37,19 +37,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Merge and deduplicate based on title + seller or URL
-    const jobsMap = new Map<string, Job>();
-
-    [...apiJobs, ...scrapedJobs].forEach((job) => {
-      const key = ((job.url || ""))
-        .toLowerCase()
-        .trim();
-
-      if (!jobsMap.has(key)) {
-        jobsMap.set(key, job);
-      }
-    });
-
-    const combinedJobs = Array.from(jobsMap.values());
+        const combinedJobs = [...apiJobs, ...scrapedJobs];
 
     // 5. Return response
     return NextResponse.json({ jobs: combinedJobs });
