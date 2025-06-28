@@ -48,8 +48,12 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
 
         const data = await res.json();
         setJobs(data.jobs || []);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch jobs");
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || "Failed to fetch jobs");
+        } else {
+          setError("Failed to fetch jobs");
+        }
       } finally {
         setLoading(false);
       }

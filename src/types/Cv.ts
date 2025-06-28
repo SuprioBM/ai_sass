@@ -51,5 +51,5 @@ export type Job = {
   location?: string;
   description?: string;
   url?: string;
-  [key: string]: any;
+  key: string;
 }
