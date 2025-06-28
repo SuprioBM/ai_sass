@@ -5,33 +5,44 @@ export async function POST(req: Request) {
   try {
     const { query, location, skills, experience, salary } = await req.json();
 
-    // 1. Fetch jobs from JSearch API
+    // 1. Ensure we always have a valid query
+    const jobQuery = query?.trim() || "developer";
+
+    // 2. Fetch jobs from JSearch API
     const apiJobs = await fetchJobsFromJSearch({
-      query,
+      query: jobQuery,
       location,
       skills,
       experience,
       salary,
     });
 
-    // 2. Fetch scraped jobs from external scraper (Playwright server)
-    const scraperRes = await fetch(
-      "https://playwright-20q3.onrender.com/scrape",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query, location, skills, experience, salary }),
-      }
-    );
+    // 3. Fetch scraped jobs from external Playwright server
+    let scrapedJobs = [];
+    try {
+      const scraperRes = await fetch(
+        "https://playwright-kyd4.onrender.com/scrape",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: jobQuery, skills }),
+        }
+      );
 
-    const scrapedData = await scraperRes.json();
-    const scrapedJobs = scrapedData.gigs || [];
+      const scrapedData = await scraperRes.json();
+      scrapedJobs = scrapedData?.gigs || [];
+    } catch (scrapeErr) {
+      console.error("Scraper failed:", scrapeErr);
+    }
 
-    // 3. Merge and filter duplicates
+    // 4. Merge and deduplicate based on title + seller or URL
     const jobsMap = new Map<string, any>();
 
     [...apiJobs, ...scrapedJobs].forEach((job) => {
-      const key = (job.title + (job.url || "")).toLowerCase().trim();
+      const key = ((job.url || ""))
+        .toLowerCase()
+        .trim();
+
       if (!jobsMap.has(key)) {
         jobsMap.set(key, job);
       }
@@ -39,7 +50,7 @@ export async function POST(req: Request) {
 
     const combinedJobs = Array.from(jobsMap.values());
 
-    // 4. Return response
+    // 5. Return response
     return NextResponse.json({ jobs: combinedJobs });
   } catch (error) {
     console.error("Job API error:", error);
