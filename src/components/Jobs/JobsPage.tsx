@@ -11,8 +11,8 @@ export default function JobsPage() {
   const query = searchParams.get("query") || "";
   const location = searchParams.get("location") || "";
   const skillsParam = searchParams.get("skills") || "";
-  const salary = searchParams.get("salary") || "";
   const experience = searchParams.get("experience") || "";
+  const type = searchParams.get("type") || "all"; // Default to "all" job types
 
   // skills come as comma-separated string, convert to array
   const skills = skillsParam
@@ -26,8 +26,8 @@ export default function JobsPage() {
     query,
     location,
     skills,
-    salary,
     experience,
+    type
   };
 
   return (

@@ -46,10 +46,11 @@ export type CvFormData = {
 
 
 export type Job = {
-  title?: string;
-  company?: string;
-  location?: string;
-  description?: string;
-  url?: string;
-  key: string;
-}
+  title: string;
+  company: string;
+  location: string;
+  type: "remote" | "onsite" | "hybrid";
+  description: string;
+  url: string;
+  source: string;
+};

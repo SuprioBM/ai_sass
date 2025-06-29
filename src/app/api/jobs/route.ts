@@ -1,28 +1,46 @@
 import { NextResponse } from "next/server";
-import { fetchJobsFromJSearch } from "@/lib/jobs/fetchJobs";
+import { fetchAllJobs } from "@/lib/jobs/fetchAllJobs";
+
+const experienceMap: Record<string, string> = {
+  any: "", // no experience keyword
+  entry: "1 year", // no experience keyword
+  mid: "3 years", // mid-level approx
+  senior: "5 years", // senior approx
+};
 
 export async function POST(req: Request) {
   try {
-    const { query, location, skills, experience, salary } = await req.json();
+    const {
+      query,
+      location,
+      skills = [],
+      experience = "",
+      type = "all",
+    } = await req.json();
 
-    // 1. Ensure we always have a valid query
-    const jobQuery = query?.trim() || "developer";
+    // Build enriched query string: query + skills + mapped experience
+    const experienceQuery = experienceMap[experience] || "";
+    const jobQuery = [
+      query?.trim() || "developer",
+      ...skills,
+      experienceQuery ? `${experienceQuery} experience` : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
 
-    // 2. Fetch jobs from JSearch API
-    const apiJobs = await fetchJobsFromJSearch({
+    // Fetch jobs from all integrated APIs
+    const jobs = await fetchAllJobs({
       query: jobQuery,
       location,
-      skills,
-      experience,
-      salary,
+      type,
     });
-
-    // 3. Return response
-    return NextResponse.json({ jobs: apiJobs });
+    console.log(`Fetched ${jobs.length} jobs for query: "${jobQuery}"`);
+    
+    return NextResponse.json({ jobs });
   } catch (error) {
-    console.error("Job API error:", error);
+    console.error("Job Aggregator Error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch jobs" },
+      { error: "Failed to fetch jobs." },
       { status: 500 }
     );
   }

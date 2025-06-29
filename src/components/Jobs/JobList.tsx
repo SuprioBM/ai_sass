@@ -4,20 +4,20 @@ import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 
 type Job = {
-  employer_name: string;
-  job_title: string;
-  job_description: string;
-  job_city: string;
-  job_country: string;
-  job_apply_link: string;
+  location: string;
+  title: string;
+  description: string;
+  url: string;
+  type: string;
+  source: string;
 };
 
 type JobSearchParams = {
   query: string;
   location: string;
   skills: string[];
-  salary: string;
   experience: string;
+  type: string; // Optional, can be "all", "full-time", "part-time", etc.
 };
 
 interface JobListProps {
@@ -47,10 +47,13 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
         }
 
         const data = await res.json();
+        console.log("Fetched jobs:", data.jobs);
+        
         setJobs(data.jobs || []);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message || "Failed to fetch jobs");
+          console.log("Job fetch error:", err);
         } else {
           setError("Failed to fetch jobs");
         }
@@ -74,13 +77,13 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
     <div className="space-y-4">
       {jobs.map((job, idx) => (
         <Card key={idx} className="p-4">
-          <h3 className="font-semibold text-lg">{job.job_title}</h3>
+          <h3 className="font-semibold text-lg">{job.title}</h3>
           <p className="text-sm text-muted-foreground">
-            {job.employer_name} — {job.job_city}, {job.job_country}
+            {job.source} — {job.type}, {job.location}
           </p>
-          <p className="mt-2 line-clamp-3 text-sm">{job.job_description}</p>
+          <p className="mt-2 line-clamp-3 text-sm">{job.description}</p>
           <a
-            href={job.job_apply_link}
+            href={job.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-3 text-sm text-blue-600 hover:underline"

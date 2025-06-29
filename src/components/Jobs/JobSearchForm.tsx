@@ -19,8 +19,8 @@ export function JobSearchForm() {
     query: "",
     location: "",
     skills: [] as string[],
-    salary: "",
-    experience: "",
+    experience: "any",
+    type: "all",
   });
 
   const [skillInput, setSkillInput] = useState("");
@@ -121,24 +121,37 @@ export function JobSearchForm() {
             </div>
 
             <div>
-              <Label>Salary Range (Optional)</Label>
-              <Input
-                placeholder="e.g. 60000"
-                value={formData.salary}
-                onChange={(e) => handleChange("salary", e.target.value)}
-              />
-            </div>
-
-            <div>
               <Label>Experience Level</Label>
-              <Select onValueChange={(val) => handleChange("experience", val)}>
+              <Select
+                value={formData.experience}
+                onValueChange={(val) => handleChange("experience", val)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select experience level" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="any">Any</SelectItem>
                   <SelectItem value="entry">Entry Level</SelectItem>
                   <SelectItem value="mid">Mid Level</SelectItem>
                   <SelectItem value="senior">Senior Level</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Job Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(val) => handleChange("type", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="remote">Remote</SelectItem>
+                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                  <SelectItem value="onsite">Onsite</SelectItem>
                 </SelectContent>
               </Select>
             </div>
