@@ -10,6 +10,7 @@ export const dummyData = {
   email: "suprio@example.com",
   phone: "+880123456789",
   location: "Dhaka, Bangladesh",
+  jobTitle: "Full Stack Developer",
   linkedin: "https://linkedin.com/in/supriodev",
   github: "https://github.com/supriodev",
   portfolio: "https://supriodev.com",

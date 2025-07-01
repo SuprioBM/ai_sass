@@ -6,25 +6,35 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 type CvWizardData = {
   userData: CvFormData;
-  aiData: CvFormData; // replace 'any' with a proper type for user form data
+  aiData: CvFormData;
   selectedTemplateId: string | null;
 };
 
 type CvWizardContextType = {
   data: CvWizardData;
   setUserData: (data: CvFormData) => void;
-  setAiData: (data: CvFormData) => void; // Optional, if you want to set AI data
+  setAiData: (data: CvFormData) => void;
   setSelectedTemplateId: (id: string) => void;
+  resetWizard: () => void; // ✅ new reset function
 };
 
-const CvWizardContext = createContext<CvWizardContextType | undefined>(undefined);
+const CvWizardContext = createContext<CvWizardContextType | undefined>(
+  undefined
+);
 
 export const CvWizardProvider = ({ children }: { children: ReactNode }) => {
   const [userData, setUserData] = useState<CvFormData>({} as CvFormData);
-  const [aiData, setAiData] = useState<CvFormData>({} as CvFormData); // replace 'any' with a proper type for AI data
+  const [aiData, setAiData] = useState<CvFormData>({} as CvFormData);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     null
   );
+
+  // ✅ new reset function
+  const resetWizard = () => {
+    setUserData({} as CvFormData);
+    setAiData({} as CvFormData);
+    setSelectedTemplateId(null);
+  };
 
   const value = {
     data: {
@@ -35,6 +45,7 @@ export const CvWizardProvider = ({ children }: { children: ReactNode }) => {
     setUserData,
     setAiData,
     setSelectedTemplateId,
+    resetWizard, // ✅ add to context
   };
 
   return (

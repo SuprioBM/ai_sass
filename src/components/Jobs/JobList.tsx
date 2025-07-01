@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 type Job = {
   location: string;
   title: string;
@@ -10,6 +11,7 @@ type Job = {
   url: string;
   type: string;
   source: string;
+  id: string; // Unique identifier for the job
 };
 
 type JobSearchParams = {
@@ -28,6 +30,7 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchJobs() {
@@ -82,14 +85,37 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
             {job.source} — {job.type}, {job.location}
           </p>
           <p className="mt-2 line-clamp-3 text-sm">{job.description}</p>
+
           <a
             href={job.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-3 text-sm text-blue-600 hover:underline"
+            className="inline-block w-fit mt-3 text-sm text-blue-600 hover:underline"
           >
-            Apply Now →
+            See Details →
           </a>
+
+          <div className="mt-4 flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="default"
+              onClick={() => {
+                localStorage.setItem("selectedJob", JSON.stringify(job));
+                router.push("/cv/custom_ai_cv");
+              }}
+            >
+              Generate CV for This Job
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                localStorage.setItem("selectedJob", JSON.stringify(job));
+                router.push("/generate-letter");
+              }}
+            >
+              Generate Cover Letter
+            </Button>
+          </div>
         </Card>
       ))}
     </div>

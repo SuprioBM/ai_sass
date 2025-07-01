@@ -3,6 +3,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { CvFormData } from "@/types/Cv";
+import { useCvWizard } from "@/context/CvWizardContext";
 
 type CvFormProps = {
   onSubmit: (data: CvFormData) => void;
@@ -42,29 +43,43 @@ export default function CvForm({
     }
   );
 
+  const { setUserData } = useCvWizard();
   const skills = watch("skills") || [];
   const languages = watch("languages") || [];
 
-  const prevDataRef = useRef<CvFormData | null>(null);
-  const isFirstLoadRef = useRef(true);
+
+  const hasInitializedForm = useRef(false);
+  const isResettingRef = useRef(false);
+
 
 
   useEffect(() => {
-    if (isFirstLoadRef.current) {
-      reset(formData); // ✅ only reset on initial load
-      prevDataRef.current = formData;
-      isFirstLoadRef.current = false;
+    const aiDataIsReady = formData.name?.length > 0;
+
+    if (aiDataIsReady && !hasInitializedForm.current) {
+      isResettingRef.current = true;
+      reset(formData);
+      hasInitializedForm.current = true;
+
+      // Small delay to let form settle before re-enabling saving
+      setTimeout(() => {
+        isResettingRef.current = false;
+      }, 100);
     }
   }, [formData, reset]);
+  
   
 
   useEffect(() => {
     const subscription = watch((value) => {
-      setFormData(value as CvFormData);
+      if (!isResettingRef.current) {
+        setFormData(value as CvFormData);
+        setUserData(value as CvFormData); 
+      }
     });
     return () => subscription.unsubscribe();
   }, [watch, setFormData]);
-
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -78,6 +93,11 @@ export default function CvForm({
         <input
           {...register("location")}
           placeholder="Location"
+          className="input"
+        />
+        <input
+          {...register("JobTitle")}
+          placeholder="Job Title"
           className="input"
         />
         <input

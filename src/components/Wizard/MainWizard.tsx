@@ -60,6 +60,7 @@ export type FormData = {
   email: string;
   phone: string;
   location: string;
+  jobTitle?: string; // Optional field for job title
   linkedin?: string;
   github?: string;
   portfolio?: string;
@@ -78,6 +79,7 @@ const formSchema = z.object({
   email: z.string().email("Invalid email"),
   phone: z.string().min(7, "Phone is required"),
   location: z.string().min(2, "Location is required"),
+  jobTitle: z.string().optional(),
   linkedin: z.string().url().optional(),
   github: z.string().url().optional(),
   portfolio: z.string().url().optional(),
@@ -125,6 +127,7 @@ const initialFormData: FormData = {
   phone: "",
   location: "",
   linkedin: "",
+  jobTitle: "",
   github: "",
   portfolio: "",
   summary: "",
@@ -337,6 +340,9 @@ export default function MainWizard() {
                     </p>
                     <p>
                       <strong>Address:</strong> {values.location}
+                    </p>
+                    <p>
+                      <strong>Job Title:</strong> {values.jobTitle || "N/A"}
                     </p>
                     <p>
                       <strong>LinkedIn:</strong> {values.linkedin}

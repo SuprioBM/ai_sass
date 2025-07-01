@@ -58,7 +58,13 @@ export default function PersonalInfoForm({
               <p className="text-red-500 text-sm">{errors.location.message}</p>
             )}
           </div>
-
+          <div>
+            <Label htmlFor="jobTitle">Job Title</Label>
+            <Input id="jobTitle" {...register("jobTitle")} />
+            {errors.jobTitle && (
+              <p className="text-red-500 text-sm">{errors.jobTitle.message}</p>
+            )}
+            </div>
           <div>
             <Label htmlFor="linkedin">LinkedIn</Label>
             <Input id="linkedin" {...register("linkedin")} />

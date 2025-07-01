@@ -14,6 +14,7 @@ import { CvFormData } from "@/types/Cv";
 import MinimalisticTemplate from "@/components/CvTemplates/BlueTemplate";
 import { useCvWizard } from "@/context/CvWizardContext"
 import { Button } from "./ui/button";
+import { calculateTotalExperienceInYears } from "./CalculateExp";
 
 const templates = {
   ModernTemplate,
@@ -42,6 +43,7 @@ export default function FillDataPage() {
     phone: "",
     location: "",
     summary: "",
+    JobTitle: "", // Changed from 'title' to 'JobTitle' for clarity
     experience: [],
     education: [],
     skills: [],
@@ -58,6 +60,8 @@ export default function FillDataPage() {
   useEffect(() => {
     if (data.aiData) {
       setFormData(data.aiData as CvFormData);
+      console.log("Form data set from AI data:", data.aiData);
+      
     }
   }, [data]);
 
@@ -157,17 +161,21 @@ export default function FillDataPage() {
           variant="outline"
           className="ml-4"
           onClick={() => {
+            const query = encodeURIComponent(formData.JobTitle || "developer");
             const location = encodeURIComponent(formData.location || "");
             const skills = encodeURIComponent(
               (formData.skills || []).join(",")
             );
-            const experience = encodeURIComponent(
-              (formData.experience?.length || 0).toString()
+
+            const experienceInYears = calculateTotalExperienceInYears(
+              formData.experience || []
             );
-            const salary = ""; // You can collect this later if needed
+
+            const experience = encodeURIComponent(experienceInYears);
+            const salary = ""; // can be added later
 
             router.push(
-              `/jobs?location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
+              `/jobs?query=${query}&location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
             );
           }}
         >

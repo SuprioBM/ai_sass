@@ -6,7 +6,7 @@ type Education = {
   location?: string; // added location here, since you have input for it
 };
 
-type Experience = {
+export type Experience = {
   company: string;
   role: string;
   startDate: string;
@@ -29,7 +29,8 @@ export type CvFormData = {
   name: string;
   email: string;
   phone: string;
-  location: string; // optional top-level location if needed
+  location: string; 
+  JobTitle?: string;   // optional top-level location if needed
   summary: string;
   linkedin: string;
   github: string;
