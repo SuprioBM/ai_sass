@@ -71,7 +71,6 @@ useEffect(() => {
         dummyData={dummyData}
         onSelect={handleSelect}
         showGenerateButton={false}
-        disabled={loadingTemplates} // disable while loading
       />
 
       {loadingTemplates && <p>Generating previews, please wait...</p>}
