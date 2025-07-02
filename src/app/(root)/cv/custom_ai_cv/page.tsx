@@ -11,15 +11,19 @@ export default function SelectTemplatePage() {
   const [job, setJob] = useState(null);
   const { data, setAiData } = useCvWizard();
   const [loadingTemplates, setLoadingTemplates] = useState(true);
-  const formData = data.userData; 
-  const storedJob = localStorage.getItem("selectedJob");
+  const formData = data.userData;
 
+  // ✅ Move localStorage access here and guard it
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-useEffect(() => {
+    const storedJob = localStorage.getItem("selectedJob");
+
     if (!storedJob) {
       router.push("/jobs");
       return;
     }
+
     setJob(JSON.parse(storedJob));
   }, [router]);
 
@@ -42,7 +46,7 @@ useEffect(() => {
         });
 
         const data = await res.json();
-        setAiData(data); // assuming data includes previews for all templates or a single preview
+        setAiData(data);
       } catch (err) {
         console.error("Failed to generate CV previews", err);
       } finally {
@@ -52,10 +56,9 @@ useEffect(() => {
 
     generatePreviews();
   }, [job, formData, setAiData]);
-  
 
   const handleSelect = (templateId: string) => {
-    if (loadingTemplates) return; // Prevent click when loading
+    if (loadingTemplates) return;
     router.push(`/cv/fill-data?template=${templateId}`);
   };
 
