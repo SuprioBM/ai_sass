@@ -9,6 +9,7 @@ import { NavbarDemo } from "./ResizeableNavbar";
 import { ParallaxSkew } from "./Parallax/ParallaxSkew";
 import { StickyScrollRevealDemo } from "./StickyReveal";
 import FuturisticFooter from "./footer";
+import { ExpandingCardRow } from "./ui/ExpandingCard";
 
 
 type SecondLandingPageProps = {
@@ -54,13 +55,7 @@ export default function SecondLandingPage({
           <HeroSectionOne scrollRef={scrollRef} />
 
           <div className="flex flex-col gap-12 py-16 mx-auto">
-            <ParallaxBackground
-              scrollRef={scrollRef}
-              className="relative w-full max-w-[95%] sm:max-w-4xl lg:max-w-[1400px] h-[450px] mx-auto rounded-xl shadow-lg flex flex-col items-center justify-center text-white bg-[url('/prompt1.png')] bg-cover bg-center border border-white/30 mb-20"
-              backgroundSpeed={0.02}
-            >
-              <h1>Prompt of the day</h1>
-            </ParallaxBackground>
+          <ExpandingCardRow />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 px-4 sm:px-10 max-w-5xl mx-auto">
               <ParallaxX
