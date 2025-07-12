@@ -1,7 +1,6 @@
 import { useState, useEffect, RefObject } from "react";
 import { ParallaxY } from "./Parallax/ParallaxY";
 import { ParallaxFade } from "./Parallax/ParallaxFade";
-import { ParallaxBackground } from "./Parallax/ParallaxBackground";
 import { ParallaxZoom } from "./Parallax/ParallaxZoom";
 import { ParallaxX } from "./Parallax/ParallaxX";
 import { HeroSectionOne } from "./HeroSection";
