@@ -44,7 +44,6 @@ interface TemplatePreviewSelectorProps {
   onSelect?: (templateId: string) => void;
   dummyData: CvFormData;
   showGenerateButton?: boolean;
-  disabled?: boolean;
   
 }
 
@@ -52,7 +51,6 @@ export default function TemplatePreviewSelector({
   onSelect,
   dummyData,
   showGenerateButton = false,
-  disabled = false,
 }: TemplatePreviewSelectorProps) {
   const [previews, setPreviews] = useState<{ id: string; imageUrl: string }[]>(
     []
