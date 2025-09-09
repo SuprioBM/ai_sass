@@ -40,7 +40,7 @@ export const ParallaxWrapper: React.FC<ParallaxWrapperProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    // if (!isLoggedIn) return;
 
     const isMobile = window.matchMedia("(pointer: coarse)").matches;
     let startY = 0;
