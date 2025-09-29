@@ -3,6 +3,7 @@ import "../globals.css";
 import { SessionProvider } from "next-auth/react";
 import { CvWizardProvider } from "@/context/CvWizardContext";
 import CustomCursorPage from "@/components/ui/neoncursor";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "CvWizardAI",
@@ -24,6 +25,7 @@ export default function RootLayout({
        <SessionProvider>
       <CustomCursorPage />  
         {children}
+        <Analytics />
         </SessionProvider> 
       </CvWizardProvider>
       </body>
