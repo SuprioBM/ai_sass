@@ -232,56 +232,46 @@ export default function FillDataPage() {
   }
 
   return (
-    <div className="flex gap-5">
-      <div style={{ flex: 1, maxHeight: "100vh", overflowY: "auto" }}>
-        <CvForm
-          key={templateId}
-          onSubmit={(updatedData) => setFormData(updatedData)}
-          formData={formData}
-          setFormData={setFormData}
-        />
+    <div className="flex flex-col lg:flex-row gap-5">
+  
+  {/* LEFT */}
+  <div className="flex-1 overflow-auto lg:max-h-screen">
+    <CvForm
+      key={templateId}
+      onSubmit={(updatedData) => setFormData(updatedData)}
+      formData={formData}
+      setFormData={setFormData}
+    />
 
-        <div className="mt-5 flex gap-4">
-          <button onClick={handleDownload} className="btn-primary">
-            Download PDF
-          </button>
+    <div className="mt-5 flex flex-col sm:flex-row gap-4">
+      <button onClick={handleDownload} className="btn-primary">
+        Download PDF
+      </button>
 
-          <Button variant="outline" onClick={handleSearchJobs}>
-            Search Jobs Based on This CV
-          </Button>
-        </div>
-      </div>
-
-      <div
-        style={{
-          flex: 1,
-          border: "1px solid #ccc",
-          padding: 10,
-          height: "100vh",
-          overflow: "auto",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <h2 style={{ marginBottom: 10 }}>Preview</h2>
-
-        {previewImageUrl ? (
-          <img
-            src={previewImageUrl}
-            alt="PDF Preview"
-            style={{
-              width: "100%",
-              height: "auto",
-              borderRadius: 8,
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          />
-        ) : isGeneratingPreview ? (
-          <p>Generating preview...</p>
-        ) : (
-          <p>No preview available yet.</p>
-        )}
-      </div>
+      <Button variant="outline" onClick={handleSearchJobs}>
+        Search Jobs Based on This CV
+      </Button>
     </div>
+  </div>
+
+  {/* RIGHT */}
+  <div className="flex-1 border p-3 overflow-auto lg:h-screen">
+    <h2 className="mb-2">Preview</h2>
+
+    {previewImageUrl ? (
+      <img
+        src={previewImageUrl}
+        alt="PDF Preview"
+        className="w-full rounded shadow"
+      />
+    ) : isGeneratingPreview ? (
+      <p>Generating preview...</p>
+    ) : (
+      <p>No preview available yet.</p>
+    )}
+  </div>
+
+</div>
+    
   );
 }
