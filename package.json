@@ -34,7 +34,7 @@
     "next": "^15.5.14",
     "next-auth": "^5.0.0-beta.28",
     "ngrok": "^5.0.0-beta.2",
-    "nodemailer": "^8.0.3",
+    "nodemailer": "^7.0.13",
     "openai": "^4.104.0",
     "pdfjs-dist": "^5.2.133",
     "react": "^19.0.0",
