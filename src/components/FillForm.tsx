@@ -232,45 +232,49 @@ export default function FillDataPage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5">
-  
+  <div className="flex flex-col lg:flex-row gap-5">
   {/* LEFT */}
-  <div className="flex-1 overflow-auto lg:max-h-screen">
-    <CvForm
-      key={templateId}
-      onSubmit={(updatedData) => setFormData(updatedData)}
-      formData={formData}
-      setFormData={setFormData}
-    />
+  <div className="flex-1">
+    <div className="border rounded p-4 h-[50vh] flex flex-col">
+      <div className="flex-1 overflow-y-auto pr-2">
+        <CvForm
+          key={templateId}
+          onSubmit={(updatedData) => setFormData(updatedData)}
+          formData={formData}
+          setFormData={setFormData}
+        />
+      </div>
 
-    <div className="mt-5 flex flex-col sm:flex-row gap-4">
-      <button onClick={handleDownload} className="btn-primary">
-        Download PDF
-      </button>
+      <div className="mt-4 flex flex-col sm:flex-row gap-4 shrink-0">
+        <button onClick={handleDownload} className="btn-primary">
+          Download PDF
+        </button>
 
-      <Button variant="outline" onClick={handleSearchJobs}>
-        Search Jobs Based on This CV
-      </Button>
+        <Button variant="outline" onClick={handleSearchJobs}>
+          Search Jobs Based on This CV
+        </Button>
+      </div>
     </div>
   </div>
 
   {/* RIGHT */}
-  <div className="flex-1 border p-3 overflow-auto lg:h-screen">
-    <h2 className="mb-2">Preview</h2>
+  <div className="flex-1">
+    <div className="border rounded p-3 h-[80vh] overflow-y-auto">
+      <h2 className="mb-2">Preview</h2>
 
-    {previewImageUrl ? (
-      <img
-        src={previewImageUrl}
-        alt="PDF Preview"
-        className="w-full rounded shadow"
-      />
-    ) : isGeneratingPreview ? (
-      <p>Generating preview...</p>
-    ) : (
-      <p>No preview available yet.</p>
-    )}
+      {previewImageUrl ? (
+        <img
+          src={previewImageUrl}
+          alt="PDF Preview"
+          className="w-full rounded shadow"
+        />
+      ) : isGeneratingPreview ? (
+        <p>Generating preview...</p>
+      ) : (
+        <p>No preview available yet.</p>
+      )}
+    </div>
   </div>
-
 </div>
     
   );
