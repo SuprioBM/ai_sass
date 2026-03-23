@@ -34,7 +34,6 @@ export async function POST(req: Request) {
       location,
       type,
     });
-    console.log(`Fetched ${jobs.length} jobs for query: "${jobQuery}"`);
     
     return NextResponse.json({ jobs });
   } catch (error) {

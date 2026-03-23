@@ -4,8 +4,9 @@ import { chatWithLLM } from "@/lib/ai/aiClient"; // your existing wrapper
 export async function POST(req: NextRequest) {
   try {
     const { job, userData } = await req.json();
+    
 
-    if (!job?.description || !job?.title) {
+    if (!job?.title) {
       return NextResponse.json(
         { error: "Job information is incomplete" },
         { status: 400 }
@@ -119,7 +120,6 @@ ${JSON.stringify(userData, null, 2)}`
 
     try {
       const parsed = JSON.parse(cleaned);
-      console.log("Parsed AI JSON:", parsed);
       return NextResponse.json(parsed, { status: 200 });
     } catch (err) {
       console.error(

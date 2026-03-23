@@ -22,22 +22,7 @@ export async function POST(req: NextRequest) {
       jobDescription,
     } = body;
 
-    console.log(
-      name,
-      email,
-      phone,
-      location,
-      skills,
-      education,
-      experience,
-      projects,
-      certificates,
-      languages,
-      jobDescription,
-      linkedin,
-      github,
-      portfolio
-    );
+ 
 
     if (!jobDescription || !name || !email) {
       return NextResponse.json(

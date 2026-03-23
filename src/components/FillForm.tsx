@@ -1,18 +1,19 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { pdf } from "@react-pdf/renderer";
 import debounce from "lodash.debounce";
-import { useRouter } from "next/navigation";
+
 import CvForm from "@/components/CVform";
 import ModernTemplate from "@/components/CvTemplates/ModernTemplate";
 import StylishTemplate from "@/components/CvTemplates/StylishTemplate";
-import {ClassicTemplate }from "@/components/CvTemplates/ClassicTemplate";
-import {CreativeTemplate} from "@/components/CvTemplates/CreativeTemplate";
-import { CvFormData } from "@/types/Cv";
+import { ClassicTemplate } from "@/components/CvTemplates/ClassicTemplate";
+import { CreativeTemplate } from "@/components/CvTemplates/CreativeTemplate";
 import MinimalisticTemplate from "@/components/CvTemplates/BlueTemplate";
-import { useCvWizard } from "@/context/CvWizardContext"
+
+import { CvFormData } from "@/types/Cv";
+import { useCvWizard } from "@/context/CvWizardContext";
 import { Button } from "./ui/button";
 import { calculateTotalExperienceInYears } from "./CalculateExp";
 
@@ -21,103 +22,169 @@ const templates = {
   StylishTemplate,
   ClassicTemplate,
   CreativeTemplate,
-  MinimalisticTemplate
-
+  MinimalisticTemplate,
 };
+
+const EMPTY_FORM_DATA: CvFormData = {
+  name: "",
+  email: "",
+  phone: "",
+  location: "",
+  summary: "",
+  JobTitle: "",
+  experience: [],
+  education: [],
+  skills: [],
+  languages: [],
+  projects: [],
+  certificates: [],
+  linkedin: "",
+  github: "",
+  portfolio: "",
+};
+
+function isNonEmptyObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && Object.keys(value).length > 0;
+}
+
+function hasMeaningfulFormData(data: CvFormData): boolean {
+  return Boolean(
+    data.name?.trim() ||
+      data.email?.trim() ||
+      data.phone?.trim() ||
+      data.location?.trim() ||
+      data.summary?.trim() ||
+      data.JobTitle?.trim() ||
+      data.linkedin?.trim() ||
+      data.github?.trim() ||
+      data.portfolio?.trim() ||
+      data.experience?.length ||
+      data.education?.length ||
+      data.skills?.length ||
+      data.languages?.length ||
+      data.projects?.length ||
+      data.certificates?.length
+  );
+}
 
 export default function FillDataPage() {
   const searchParams = useSearchParams();
-  const templateId = searchParams.get("template");
-  console.log("Selected Template ID:", templateId);
-  
-  const TemplateComponent =
-    templateId && templates[templateId as keyof typeof templates]
-      ? templates[templateId as keyof typeof templates]
-      : null;
-
-  console.log("Using Template Component:", TemplateComponent);
-  const { data } = useCvWizard();
-  const [formData, setFormData] = useState<CvFormData>({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
-    summary: "",
-    JobTitle: "", // Changed from 'title' to 'JobTitle' for clarity
-    experience: [],
-    education: [],
-    skills: [],
-    languages: [],
-    projects: [],
-    certificates: [],
-    linkedin: "",
-    github: "",
-    portfolio: ""
-  });
-
   const router = useRouter();
+  const { data } = useCvWizard();
 
-  useEffect(() => {
-    if (data.aiData) {
-      setFormData(data.aiData as CvFormData);
-      console.log("Form data set from AI data:", data.aiData);
-      
-    }
-  }, [data]);
+  const templateId = searchParams.get("template");
 
+  const TemplateComponent = useMemo(() => {
+    if (!templateId) return null;
+    return templates[templateId as keyof typeof templates] ?? null;
+  }, [templateId]);
+
+  const [formData, setFormData] = useState<CvFormData>(EMPTY_FORM_DATA);
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
-  const debouncedGeneratePdf = useMemo(
-    () =>
-      debounce(async (data: CvFormData) => {
-        try {
-          if (!TemplateComponent) {
-            throw new Error("No template selected or template not found.");
-          }
-          const doc = <TemplateComponent data={data} />;
-          const asPdf = pdf();
-          asPdf.updateContainer(doc);
-          const blob = await asPdf.toBlob();
+  const initializedFromAIRef = useRef(false);
+  const latestPreviewJobRef = useRef(0);
 
-          const url = URL.createObjectURL(blob);
-          setPdfBlobUrl((prev) => {
-            if (prev) URL.revokeObjectURL(prev);
-            return url;
-          });
-
-          // Generate a static preview image
-          const imageUrl = await generateImageFromBlob(blob);
-          setPreviewImageUrl((prev) => {
-            if (prev) URL.revokeObjectURL(prev);
-            return imageUrl;
-          });
-        } catch (err) {
-          console.error("Failed to generate preview", err);
-        }
-      }, 1000),
-    []
-  );
-
-  const generateImageFromBlob = async (blob: Blob): Promise<string> => {
+  const generateImageFromBlob = useCallback(async (blob: Blob): Promise<string> => {
     const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
     pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+
     const arrayBuffer = await blob.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const page = await pdf.getPage(1);
-    const viewport = page.getViewport({ scale: 5 });
+    const pdfDocument = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const page = await pdfDocument.getPage(1);
+    const viewport = page.getViewport({ scale: 2.2 });
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
 
-    await page.render({ canvasContext: context!, viewport }).promise;
-    return canvas.toDataURL("image/jpg");
-  };
+    if (!context) {
+      throw new Error("Could not create canvas context for PDF preview.");
+    }
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    await page.render({
+      canvasContext: context,
+      viewport,
+    }).promise;
+
+    return canvas.toDataURL("image/jpeg", 0.9);
+  }, []);
+
+  const generatePdfPreview = useCallback(
+    async (dataToRender: CvFormData) => {
+      if (!TemplateComponent) {
+        setPreviewImageUrl(null);
+        setPdfBlobUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return null;
+        });
+        return;
+      }
+
+      const currentJobId = ++latestPreviewJobRef.current;
+      setIsGeneratingPreview(true);
+
+      try {
+        const doc = <TemplateComponent data={dataToRender} />;
+        const asPdf = pdf();
+        asPdf.updateContainer(doc);
+
+        const blob = await asPdf.toBlob();
+
+        if (currentJobId !== latestPreviewJobRef.current) return;
+
+        const objectUrl = URL.createObjectURL(blob);
+
+        setPdfBlobUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return objectUrl;
+        });
+
+        const imageUrl = await generateImageFromBlob(blob);
+
+        if (currentJobId !== latestPreviewJobRef.current) {
+          URL.revokeObjectURL(objectUrl);
+          return;
+        }
+
+        setPreviewImageUrl(imageUrl);
+      } catch (error) {
+        console.error("Failed to generate PDF preview:", error);
+      } finally {
+        if (currentJobId === latestPreviewJobRef.current) {
+          setIsGeneratingPreview(false);
+        }
+      }
+    },
+    [TemplateComponent, generateImageFromBlob]
+  );
+
+  const debouncedGeneratePdf = useMemo(() => {
+    return debounce((nextData: CvFormData) => {
+      void generatePdfPreview(nextData);
+    }, 400);
+  }, [generatePdfPreview]);
+
+  useEffect(() => {
+    const aiData = data?.aiData;
+
+    if (initializedFromAIRef.current) return;
+    if (!isNonEmptyObject(aiData)) return;
+
+    const parsedAiData = aiData as CvFormData;
+    if (!hasMeaningfulFormData(parsedAiData)) return;
+
+    setFormData(parsedAiData);
+    initializedFromAIRef.current = true;
+  }, [data?.aiData]);
 
   useEffect(() => {
     debouncedGeneratePdf(formData);
+
     return () => {
       debouncedGeneratePdf.cancel();
     };
@@ -125,65 +192,66 @@ export default function FillDataPage() {
 
   useEffect(() => {
     return () => {
-      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
-      if (previewImageUrl) URL.revokeObjectURL(previewImageUrl);
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
     };
-  }, [pdfBlobUrl, previewImageUrl]);
+  }, [pdfBlobUrl]);
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     if (!pdfBlobUrl) return;
+
     const link = document.createElement("a");
     link.href = pdfBlobUrl;
     link.download = "cv.pdf";
     document.body.appendChild(link);
     link.click();
     link.remove();
-  };
+  }, [pdfBlobUrl]);
+
+  const handleSearchJobs = useCallback(() => {
+    const query = encodeURIComponent(formData.JobTitle || "developer");
+    const location = encodeURIComponent(formData.location || "");
+    const skills = encodeURIComponent((formData.skills || []).join(","));
+    const experienceInYears = calculateTotalExperienceInYears(formData.experience || []);
+    const experience = encodeURIComponent(String(experienceInYears));
+    const salary = "";
+
+    router.push(
+      `/jobs?query=${query}&location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
+    );
+  }, [formData, router]);
+
+  if (!TemplateComponent) {
+    return (
+      <div className="p-6">
+        <h2 className="text-xl font-semibold mb-2">Invalid template</h2>
+        <p>Please go back and select a valid CV template.</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: "flex", gap: 20 }}>
-      {/* Form Section */}
+    <div className="flex gap-5">
       <div style={{ flex: 1, maxHeight: "100vh", overflowY: "auto" }}>
         <CvForm
           key={templateId}
-          onSubmit={(data) => setFormData(data)}
+          onSubmit={(updatedData) => setFormData(updatedData)}
           formData={formData}
           setFormData={setFormData}
         />
-        <button
-          onClick={handleDownload}
-          className="btn-primary mt-4"
-          style={{ marginTop: 20 }}
-        >
-          Download PDF
-        </button>
-        <Button
-          variant="outline"
-          className="ml-4"
-          onClick={() => {
-            const query = encodeURIComponent(formData.JobTitle || "developer");
-            const location = encodeURIComponent(formData.location || "");
-            const skills = encodeURIComponent(
-              (formData.skills || []).join(",")
-            );
 
-            const experienceInYears = calculateTotalExperienceInYears(
-              formData.experience || []
-            );
+        <div className="mt-5 flex gap-4">
+          <button onClick={handleDownload} className="btn-primary">
+            Download PDF
+          </button>
 
-            const experience = encodeURIComponent(experienceInYears);
-            const salary = ""; // can be added later
-
-            router.push(
-              `/jobs?query=${query}&location=${location}&skills=${skills}&experience=${experience}&salary=${salary}`
-            );
-          }}
-        >
-          Search Jobs Based on This CV
-        </Button>
+          <Button variant="outline" onClick={handleSearchJobs}>
+            Search Jobs Based on This CV
+          </Button>
+        </div>
       </div>
 
-      {/* Preview Section */}
       <div
         style={{
           flex: 1,
@@ -196,6 +264,7 @@ export default function FillDataPage() {
         }}
       >
         <h2 style={{ marginBottom: 10 }}>Preview</h2>
+
         {previewImageUrl ? (
           <img
             src={previewImageUrl}
@@ -207,8 +276,10 @@ export default function FillDataPage() {
               boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
             }}
           />
-        ) : (
+        ) : isGeneratingPreview ? (
           <p>Generating preview...</p>
+        ) : (
+          <p>No preview available yet.</p>
         )}
       </div>
     </div>

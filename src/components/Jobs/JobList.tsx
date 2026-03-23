@@ -50,13 +50,12 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
         }
 
         const data = await res.json();
-        console.log("Fetched jobs:", data.jobs);
         
         setJobs(data.jobs || []);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message || "Failed to fetch jobs");
-          console.log("Job fetch error:", err);
+          console.error("Job fetch error:", err);
         } else {
           setError("Failed to fetch jobs");
         }
@@ -110,7 +109,7 @@ export const JobList: React.FC<JobListProps> = ({ searchParams }) => {
               variant="outline"
               onClick={() => {
                 localStorage.setItem("selectedJob", JSON.stringify(job));
-                router.push("/generate-letter");
+                router.push("/resume");
               }}
             >
               Generate Cover Letter

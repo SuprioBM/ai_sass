@@ -11,7 +11,12 @@ export async function POST(req: Request) {
       tone = "professional",
     } = await req.json();
 
-    const systemPrompt = `You are a cover letter writing assistant. Write a compelling, tailored cover letter using the user's experience and the job description. Keep the tone ${tone}, and follow standard cover letter structure (greeting, intro, body, closing).`;
+    const systemPrompt = `
+You are a cover letter writing assistant.
+Write a compelling and tailored cover letter using the user's experience and the job description.
+Keep the tone ${tone}.
+Follow a standard cover letter structure: greeting, introduction, body, and closing.
+    `.trim();
 
     const userContent = `
 Full Name: ${fullName}
@@ -24,13 +29,25 @@ Job Description: ${jobDescription}
     const coverLetter = await chatWithLLM({ systemPrompt, userContent });
 
     return new Response(JSON.stringify({ coverLetter }), {
+      status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Cover Letter API Error:", error);
+
     return new Response(
-      JSON.stringify({ error: typeof error === "object" && error !== null && "message" in error ? (error as { message?: string }).message : "Unknown error occurred" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({
+        error:
+          typeof error === "object" &&
+          error !== null &&
+          "message" in error
+            ? (error as { message?: string }).message
+            : "Unknown error occurred",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
     );
   }
 }
