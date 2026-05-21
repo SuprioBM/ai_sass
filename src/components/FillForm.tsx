@@ -235,7 +235,7 @@ export default function FillDataPage() {
   <div className="flex flex-col lg:flex-row gap-5">
   {/* LEFT */}
   <div className="flex-1">
-    <div className="border rounded p-4 h-[50vh] flex flex-col">
+    <div className="border rounded p-4 h-[50vh] lg:h-[100vh] flex flex-col">
       <div className="flex-1 overflow-y-auto pr-2">
         <CvForm
           key={templateId}
@@ -259,7 +259,7 @@ export default function FillDataPage() {
 
   {/* RIGHT */}
   <div className="flex-1">
-    <div className="border rounded p-3 h-[80vh] overflow-y-auto">
+    <div className="border rounded p-3 h-auto lg:h-[100vh] overflow-y-auto">
       <h2 className="mb-2">Preview</h2>
 
       {previewImageUrl ? (
