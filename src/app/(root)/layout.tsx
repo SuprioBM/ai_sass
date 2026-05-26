@@ -43,7 +43,10 @@ export default function RootLayout({
   
   return (
     <html lang="en" className="scroll-smooth dark">
+     <head>
+      <meta name="google-site-verification" content="LnKdFIUnYiWkSAZ8gLFRBvsFmk4Ddg2yrL92uMva9cc" />
       <link rel="icon" href="./favicon.ico" type="image/x-icon"></link>
+     </head>
       <body>
       <CvWizardProvider>
        <SessionProvider>
